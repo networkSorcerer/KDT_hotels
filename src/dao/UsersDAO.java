@@ -14,6 +14,7 @@ public class UsersDAO {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     Scanner sc = new Scanner(System.in);
+
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     List<UsersVO> list = new ArrayList<>();
     public List<UsersVO>signIn() throws SQLException {
@@ -37,6 +38,9 @@ public class UsersDAO {
 
         return list;
     }
+
+
+
     public List<UsersVO> usersList(){
         List<UsersVO> list = new ArrayList<>();
         try {
@@ -54,4 +58,8 @@ public class UsersDAO {
         }
         return list;
     }
+
 }
+
+
+
