@@ -58,7 +58,7 @@ public class HotelDAO {
         System.out.print("추가 설명 : ");
         String hExpl = sc.next();
 
-        String sql = "INSERT INTO HOTEL(HOTELID, HOTELNAME, REGION, PHONE, HOTELXPL)" +
-                "VALUES"
+        String sql = "INSERT INTO HOTEL(HOTELID, HOTELNAME, REGION, PHONE, HOTELXPL) + VALUES(?,?,?,?,?)";
+        
     }
 }
