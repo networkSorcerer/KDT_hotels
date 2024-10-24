@@ -78,16 +78,16 @@ public class HotelDAO {
     public void hotelDelete() {
         String sqlDel = "DELETE FROM HOTEL WHERE HOTELID = ?";
         List<Integer> list = new ArrayList<>();
-        int hotelID = 0;
-        int check =0;
+        int hotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    int HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("삭제할 호텔의 고유번호를 입력해 주십시오 : ");
                 hotelID = sc.nextInt();
@@ -101,14 +101,14 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
                 if (check == 1) {
                     pstmt = conn.prepareStatement(sqlDel);
                     pstmt.setInt(1, hotelID);
                     pstmt.executeUpdate();
-                    System.out.println(rs + "가 호텔 리스트에서 삭제되었습니다.");
+                    System.out.println(rs + "이/가 호텔 리스트에서 삭제되었습니다.");
                     break;
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
@@ -120,23 +120,24 @@ public class HotelDAO {
         Common.close(pstmt);
         Common.close(conn);
         Common.close(rs);
+        Common.close(rs2);
         Common.close(stmt);
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID = 0;
-        int check = 0;
+        int hotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
-                int hotelID = sc.nextInt();
+                hotelID = sc.nextInt();
 
                 boolean isHotelIDIn = list.contains(hotelID);
                 if (!isHotelIDIn) {
@@ -146,7 +147,7 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
 
@@ -171,13 +172,15 @@ public class HotelDAO {
                     pstmt.executeUpdate();
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
-
             }
         } catch (Exception e) {
             e.printStackTrace();
         }
         Common.close(stmt);
         Common.close(conn);
+        Common.close(pstmt);
+        Common.close(rs);
+        Common.close(rs2);
     }
 
     public void hotelSelectRst(List<HotelVO> list){
@@ -190,8 +193,54 @@ public class HotelDAO {
             System.out.println();
         }
     }
-}
+    public Double hotelStar(String hotelName) {     // 호텔의 이름을 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = '" + hotelName + "'";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
+        return avgStar;
+    }
 
+    public Double hotelStar(int hotelID) {      // 호텔의 고유 번호를 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = " + hotelID;
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
+        return avgStar;
+    }
+}
 
 
 
