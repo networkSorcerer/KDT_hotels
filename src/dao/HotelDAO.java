@@ -3,7 +3,6 @@ package dao;
 import common.Common;
 import vo.HotelVO;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
