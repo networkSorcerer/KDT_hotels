@@ -1,6 +1,7 @@
 package dao;
 
 import common.Common;
+import vo.HotelVO;
 import vo.UsersVO;
 
 import java.sql.*;
@@ -29,6 +30,7 @@ public class MenuListDAO {
             switch (choice) {
                 case 1 :
                     list = signIn();
+                    HotelAppMenu(list);
                     break;
                 case 2 :
                     SignUp();
@@ -41,7 +43,7 @@ public class MenuListDAO {
     }
 
     public List<UsersVO>signIn() throws SQLException {
-        System.out.println("=".repeat(10)+"L O G I N"+"=".repeat(10));
+        System.out.println("=".repeat(10)+" L O G I N "+"=".repeat(10));
         System.out.print("id :");
         String inputID = sc.next();
         System.out.print("pw :");
@@ -52,8 +54,22 @@ public class MenuListDAO {
         try{
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String query = "select *from users where where id ='"+inputID+"'and password ='" + inputPW+"'";
+            String query = "select * from users where userid ='"+inputID+"'and password ='" + inputPW+"'";
             rs = stmt.executeQuery(query);
+            while (rs.next()) {
+                String userID = rs.getString("userID");
+                String password = rs.getString("password");
+                String name = rs.getString("name");
+                int age = rs.getInt("age");
+                String email = rs.getString("email");
+                int grade = rs.getInt("grade");
+                list.add(new UsersVO(userID , password , name , age , email , grade ));
+
+            }
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
+
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
@@ -79,7 +95,7 @@ public class MenuListDAO {
         String email = sc.next();
 
 
-        String sql = "INSERT INTO users(userID , password ,name, age  , email , grade ) VALUES(?,?,?,?,?)";
+        String sql = "INSERT INTO users(userID , password ,name, age  , email , grade ) VALUES(?,?,?,?,?,?)";
         try {
             conn = Common.getConnection();
             pstmt = conn.prepareStatement(sql);
@@ -97,6 +113,29 @@ public class MenuListDAO {
         System.out.println("회원가입이 완료되었습니다. 환영합니다. ");
         Common.close(pstmt);
         Common.close(conn);
+    }
+    public void HotelAppMenu(List<UsersVO> Hlist) throws SQLException {
+        //System.out.println("반갑습니다 ." + Hlist.getFirst() + "회원님 원하시는 메뉴를 선택해주세요");
+        System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
+        System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
+        HotelListDAO dao = new HotelListDAO();
+        int num = sc.nextInt();
+        switch (num) {
+            case 1:
+                List<HotelVO>list = dao.hotelSelect();
+                dao.hotelSelectResult(list);
+                break;
+            case 2:
+
+            case 3:
+
+            case 4:
+                System.out.println("로그아웃!");
+                list=null;
+                LoginMenu(); // 로그인화면
+                break;
+
+        }
     }
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
