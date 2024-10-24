@@ -11,7 +11,7 @@ public class ReservationVO {
     private Date endDate;
     private String price;
     private String roomNumber;
-    private int;
+    private int roomID;
 
 
     public ReservationVO(int roomID, int hotelID, String roomTypeStr, int price, int roomNumber) {
