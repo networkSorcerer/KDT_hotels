@@ -24,6 +24,9 @@ public class MenuListDAO {
     List<UsersVO> list = new ArrayList<>();
     private int hotelid;
     private String userid;
+
+    private int br;
+
     ReservationDAO reservationDao;
 
     public void LoginMenu() throws SQLException {
@@ -239,8 +242,16 @@ public class MenuListDAO {
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
         int rod = sc.nextInt();
         if(rod ==1){
-            reserveHotel.reservation(hotelid,userid);
-            reserveHotel.reserveRoom();
+            // 예약 가능한 방 리스트 조회
+            List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid, userid);
+
+            // 예약 가능한 방 리스트 출력
+            if (!availableRooms.isEmpty()) {
+                reserveHotel.reserveRoom(availableRooms);  // 리스트를 전달하여 출력
+                BookARoom();
+            } else {
+                System.out.println("해당 기간에 예약 가능한 방이 없습니다.");
+            }
         } else if (rod ==2) {
             List<ReviewVO> reviews =detailHotel.detail(hotelid);
             printReviews(reviews);
@@ -255,7 +266,17 @@ public class MenuListDAO {
             System.out.println(review);
         }
     }
+    public void BookARoom(){
+        ReserveHotelDAO reserveHotelDAO = new ReserveHotelDAO();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("예약하실 roomID를 입력해주세요 : ");
+        br = sc.nextInt();
+        reserveHotelDAO.BookARoom(br,hotelid,userid);
+        boolean isSuccess = reserveHotelDAO.BookARoom(br,hotelid,userid);
+        if(isSuccess)System.out.println("예약에 성공하였습니다.");
+        else System.out.println("사원등록에 실패했습니다.");
 
+    }
 
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
