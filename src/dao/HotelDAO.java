@@ -20,12 +20,12 @@ public class HotelDAO {
     ResultSet rs = null;
     Scanner sc = new Scanner(System.in);
 
-    public List<HotelVO> HotelSelectAll() {
+    public List<HotelVO> hotelSelectAll() {
         List<HotelVO> list = new ArrayList<>();
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String query = "SELECT * FROM EMP";
+            String query = "SELECT * FROM HOTEL";
             rs = stmt.executeQuery(query);
 
             while (rs.next()) {
@@ -48,15 +48,19 @@ public class HotelDAO {
         return list;
     }
     public void hotelInsert() {
-        System.out.println("호텔 정보를 입력 하세요.");
+        System.out.println("추가할 호텔 정보를 입력 하세요.");
         System.out.print("호텔고유번호(4자리) : ");
         int hotelNo = sc.nextInt();
+        System.out.println();
         System.out.print("이름 : ");
         String hotelName = sc.next();
+        System.out.println();
         System.out.print("지역 : ");
         String hotelRegion = sc.next();
+        System.out.println();
         System.out.print("전화번호 : ");
         String hotelPhone = sc.next();
+        System.out.println();
         System.out.print("추가 설명 : ");
         String hotelExpl = sc.next();
 
@@ -79,7 +83,7 @@ public class HotelDAO {
         Common.close(conn);
     }
     public void hotelDelete() {
-        String sqlName = "SELECT NAME FROM HOTEL WHERE HOTELID = ?";
+        String sqlName = "SELECT HOTELNAME FROM HOTEL WHERE HOTELID = ?";
         String sqlDel = "DELETE FROM HOTEL WHERE HOTELID = ?";
 
         try {
@@ -111,14 +115,18 @@ public class HotelDAO {
         Common.close(rs);
     }
     public void hotelUpdate() {
-        System.out.print("변경할 호텔의 고유번호를 입력해 주세요.");
+        System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
         int hotelID = sc.nextInt();
+        System.out.println();
         System.out.print("호텔 이름 : ");
         String hotelName = sc.next();
+        System.out.println();
         System.out.print("호텔 지역 : ");
         String hotelRegion = sc.next();
+        System.out.println();
         System.out.print("호텔 전화 번호 : ");
         String hotelPhone = sc.next();
+        System.out.println();
         System.out.print("호텔 상세 정보 : ");
         String  hotelExpl = sc.next();
 
@@ -148,6 +156,7 @@ public class HotelDAO {
             System.out.print(e.getRegion() + " ");
             System.out.print(e.getPhone() + " ");
             System.out.print(e.getHotelExpl() + " ");
+            System.out.println();
         }
     }
 
