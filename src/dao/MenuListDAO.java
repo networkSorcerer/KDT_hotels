@@ -378,7 +378,7 @@ public class MenuListDAO {
             System.out.print("예약번호: ");
             int reserveNo = sc.nextInt();
             for(ReservationVO e : list){
-                if(reserveNo == e.getHotelID()){
+                if(reserveNo == e.getHotelID()){ // 예약번호 있으면
                     while(true){
                         System.out.println("[1] 예약 수정");
                         System.out.println("[2] 예약 취소");
