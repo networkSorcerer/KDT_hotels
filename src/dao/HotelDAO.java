@@ -3,7 +3,6 @@ package dao;
 import common.Common;
 import vo.HotelVO;
 
-import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -87,8 +86,8 @@ public class HotelDAO {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    int HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("삭제할 호텔의 고유번호를 입력해 주십시오 : ");
                 hotelID = sc.nextInt();
@@ -121,11 +120,12 @@ public class HotelDAO {
         Common.close(pstmt);
         Common.close(conn);
         Common.close(rs);
+        Common.close(rs2);
         Common.close(stmt);
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID;
+        int hotelID;
         int check;
         try {
             conn = Common.getConnection();
@@ -133,11 +133,11 @@ public class HotelDAO {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
-                int hotelID = sc.nextInt();
+                hotelID = sc.nextInt();
 
                 boolean isHotelIDIn = list.contains(hotelID);
                 if (!isHotelIDIn) {
@@ -178,6 +178,9 @@ public class HotelDAO {
         }
         Common.close(stmt);
         Common.close(conn);
+        Common.close(pstmt);
+        Common.close(rs);
+        Common.close(rs2);
     }
 
     public void hotelSelectRst(List<HotelVO> list){
@@ -191,44 +194,42 @@ public class HotelDAO {
         }
     }
     public Double hotelStar(String hotelName) {     // 호텔의 이름을 입력해서 해당 호텔 리뷰들의 평균 별점
-        List<Double> list = new ArrayList<>();
+        String sql = "SELECT AVG(R.STAR) AS avg_star FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = ?";
         double avgStar = 0;
-        double sum = 0;
         try {
             conn = Common.getConnection();
-            stmt = conn.createStatement();
-            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = '" + hotelName + "'";
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                double star = rs.getDouble("STAR");
-                list.add(star);
-                sum += star;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, hotelName);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                avgStar = rs.getDouble("avg_star");
             }
-            avgStar = sum / list.size();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
         return avgStar;
     }
 
     public Double hotelStar(int hotelID) {      // 호텔의 고유 번호를 입력해서 해당 호텔 리뷰들의 평균 별점
-        List<Double> list = new ArrayList<>();
+        String sql = "SELECT AVG(R.STAR) AS avg_star FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = ?";
         double avgStar = 0;
-        double sum = 0;
         try {
             conn = Common.getConnection();
-            stmt = conn.createStatement();
-            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = " + hotelID;
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                double star = rs.getDouble("STAR");
-                list.add(star);
-                sum += star;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, hotelID);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                avgStar = rs.getDouble("avg_star");
             }
-            avgStar = sum / list.size();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
         return avgStar;
     }
 }
