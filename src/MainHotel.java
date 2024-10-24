@@ -4,7 +4,7 @@ import vo.HotelVO;
 import java.util.List;
 import java.util.Scanner;
 
-public class Main {
+public class MainHotel {
     public static void main(String[] args) {
         menuSelect();
     }
