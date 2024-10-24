@@ -3,6 +3,7 @@ package dao;
 import common.Common;
 import vo.HotelVO;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -171,7 +172,6 @@ public class HotelDAO {
                     pstmt.executeUpdate();
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -189,6 +189,47 @@ public class HotelDAO {
             System.out.print(e.getHotelExpl() + " ");
             System.out.println();
         }
+    }
+    public Double hotelStar(String hotelName) {     // 호텔의 이름을 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = '" + hotelName + "'";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgStar;
+    }
+
+    public Double hotelStar(int hotelID) {      // 호텔의 고유 번호를 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = " + hotelID;
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgStar;
     }
 }
 
