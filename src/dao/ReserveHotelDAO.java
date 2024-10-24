@@ -14,7 +14,10 @@ public class ReserveHotelDAO {
     Statement stmt = null;
     ResultSet rs = null;
     Scanner sc = null;
-
+    private int hotelID;
+    private String usersID;
+    private String checkin;
+    private String checkout;
     public ReserveHotelDAO() {
         sc = new Scanner(System.in);
     }
@@ -23,23 +26,31 @@ public class ReserveHotelDAO {
     public List<ReservationVO> reservation(int hotelid, String userID) {
         List<ReservationVO> list = new ArrayList<>();
         Scanner sc = new Scanner(System.in);
-
+        hotelID =hotelid;
+        usersID =userID;
         System.out.println("[1]베이직 (1인) [2]스위트 (2인) [3]럭셔리 (4인)");
         int roomType = sc.nextInt();
         String[] type = {"베이직", "스위트", "럭셔리"};
         String selectType = type[roomType - 1];
 
         System.out.println("체크인 날짜입력 (yyyy-mm-dd) : ");
-        String checkin = sc.next();
+        checkin = sc.next();
         System.out.println("체크아웃 날짜입력 (yyyy-mm-dd) : ");
-        String checkout = sc.next();
+        checkout = sc.next();
 
         String query = "SELECT r.roomID, r.hotelID, r.roomType, r.price, r.roomNumber " +
                 "FROM room r " +
-                "LEFT JOIN reservation v ON r.roomid = v.roomid " +
-                "WHERE r.hotelID = " +hotelid+
-                "AND r.roomType = '" +selectType+"'"+
-                "AND (v.roomid IS NULL OR (v.endDate < TO_DATE('" +checkin+"', 'YYYY-MM-DD') OR v.startDate > TO_DATE('"+checkout+"', 'YYYY-MM-DD')))";
+                "WHERE r.hotelID = " + hotelid + " " +
+                "AND r.roomType = '" + selectType + "' " +
+                "AND NOT EXISTS ( " +
+                "    SELECT 1 " +
+                "    FROM reservation v " +
+                "    WHERE v.roomid = r.roomid " +
+                "    AND ( " +
+                "        (v.startDate < TO_DATE('" + checkout + "', 'YYYY-MM-DD') AND " +
+                "         v.endDate > TO_DATE('" + checkin + "', 'YYYY-MM-DD')) " +
+                "    ) " +
+                ")";
 
 
         try {
@@ -72,6 +83,7 @@ public class ReserveHotelDAO {
             Common.close(rs);
             Common.close(psmt);
             Common.close(conn);
+            Common.close(stmt);
         }
 
         return list; // 조회된 결과 리스트 반환
@@ -93,5 +105,28 @@ public class ReserveHotelDAO {
         }
 
         System.out.println("---------------------------------------");
+
+
+    }
+
+    public boolean BookARoom(int br,int hotelid, String userID) {
+        String sql = "INSERT INTO reservation (reserveID, userID, hotelID, roomID, startDate, endDate) " +
+                "VALUES (reservation_seq.nextval, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'))";
+
+        System.out.println(checkin);
+        System.out.println(checkout);
+        try{
+            conn = Common.getConnection();
+            psmt = conn.prepareStatement(sql);
+            psmt.setString(1,userID);
+            psmt.setInt(2,hotelid);
+            psmt.setInt(3,br);
+            psmt.setString(4,checkin);
+            psmt.setString(5,checkout);
+            psmt.executeUpdate();
+            return true;
+        } catch (SQLException e) {
+            throw new RuntimeException(e);
+        }
     }
 }

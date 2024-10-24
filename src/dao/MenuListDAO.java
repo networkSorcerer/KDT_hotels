@@ -261,9 +261,15 @@ public class MenuListDAO {
         }
     }
     public void BookARoom(){
+        ReserveHotelDAO reserveHotelDAO = new ReserveHotelDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("예약하실 roomID를 입력해주세요 : ");
         br = sc.nextInt();
+        reserveHotelDAO.BookARoom(br,hotelid,userid);
+        boolean isSuccess = reserveHotelDAO.BookARoom(br,hotelid,userid);
+        if(isSuccess)System.out.println("예약에 성공하였습니다.");
+        else System.out.println("사원등록에 실패했습니다.");
+
     }
 
     private String checkPassword(String pwd, String id){
