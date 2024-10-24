@@ -17,20 +17,77 @@ public class UsersDAO {
 
     public List<UsersVO> usersList(){
         List<UsersVO> list = new ArrayList<>();
+        String query = "SELECT * FROM USERS";
+
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String query = "SELECT USER_ID, NAME, AGE, EMAIL, GRADE FROM USERS";
             rs = stmt.executeQuery(query);
 
             while(rs.next()){
+                String userID = rs.getString("USERID");
+                String password = rs.getString("PASSWORD");
+                String name = rs.getString("NAME");
+                int age = rs.getInt("AGE");
+                String email = rs.getString("EMAIL");
+                int grade = rs.getInt("GRADE");
 
+                UsersVO vo = new UsersVO(userID, password, name, age, email, grade);
+                list.add(vo);
             }
-
+            Common.close(rs);
+            Common.close(stmt);
+            Common.close(conn);
         } catch (SQLException e) {
-
+            System.out.println("SELECT 에러 방생.");
         }
         return list;
+    }
+
+    public boolean usersInsert(UsersVO vo){
+        String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?, ?, ?)";
+
+        try{
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, vo.getUserID());
+            pstmt.setString(2, vo.getPassword());
+            pstmt.setString(3, vo.getName());
+            pstmt.setInt(4, vo.getAge());
+            pstmt.setString(5, vo.getEmail());
+            pstmt.setInt(6, vo.getGrade());
+            pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
+        } catch (SQLException e) {
+            System.out.println("INSERT 에러 발생.");
+            return false;
+        } finally{
+            Common.close(pstmt);
+            Common.close(conn);
+        }
+    }
+
+    public void usersDelete(String userID){
+        String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, userID);
+            pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+        } catch (SQLException e) {
+            System.out.println("DELETE 에러 발생.");
+        } finally {
+            Common.close(pstmt);
+            Common.close(conn);
+        }
+    }
+
+    public void usersListResult(List<UsersVO> list){
+        for(UsersVO e : list){
+            System.out.printf("ID: %-10s|NAME: %-8s|AGE: %-2d|EMAIL: %-20s|GRADE: %1d",
+                    e.getUserID(), e.getName(), e.getAge(), e.getEmail(), e.getGrade());
+        }
     }
 
 }
