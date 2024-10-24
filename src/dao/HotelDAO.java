@@ -1,13 +1,10 @@
 package dao;
 
-
 import common.Common;
 import vo.HotelVO;
 
-
 import java.sql.*;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Scanner;
 
@@ -81,8 +78,8 @@ public class HotelDAO {
     public void hotelDelete() {
         String sqlDel = "DELETE FROM HOTEL WHERE HOTELID = ?";
         List<Integer> list = new ArrayList<>();
-        int hotelID = 0;
-        int check =0;
+        int hotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
@@ -104,14 +101,14 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
                 if (check == 1) {
                     pstmt = conn.prepareStatement(sqlDel);
                     pstmt.setInt(1, hotelID);
                     pstmt.executeUpdate();
-                    System.out.println(rs + "가 호텔 리스트에서 삭제되었습니다.");
+                    System.out.println(rs + "이/가 호텔 리스트에서 삭제되었습니다.");
                     break;
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
@@ -127,8 +124,8 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID = 0;
-        int check = 0;
+        int HotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
@@ -149,7 +146,7 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
 
@@ -193,7 +190,6 @@ public class HotelDAO {
             System.out.println();
         }
     }
-
 }
 
 
