@@ -9,8 +9,39 @@ public class ReservationVO {
     private String hotelName;
     private Date startDate;
     private Date endDate;
-    private int roomID;
+    private String price;
+    private String roomNumber;
+    private int;
 
+
+    public ReservationVO(int roomID, int hotelID, String roomTypeStr, int price, int roomNumber) {
+    }
+
+    public String getRoomNumber() {
+        return roomNumber;
+    }
+
+    public void setRoomNumber(String roomNumber) {
+        this.roomNumber = roomNumber;
+    }
+
+    public String getPrice() {
+        return price;
+    }
+
+    public void setPrice(String price) {
+        this.price = price;
+    }
+
+    public String getRoomType() {
+        return roomType;
+    }
+
+    public void setRoomType(String roomType) {
+        this.roomType = roomType;
+    }
+
+    private String roomType;
     public ReservationVO() {}
 
     public ReservationVO(int reserveID, String userID, int hotelID, String hotelName, Date startDate, Date endDate, int roomID) {

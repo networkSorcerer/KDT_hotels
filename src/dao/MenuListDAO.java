@@ -21,6 +21,7 @@ public class MenuListDAO {
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     List<UsersVO> list = new ArrayList<>();
     private int hotelid;
+    private String userid;
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
         while(true) {
@@ -47,16 +48,16 @@ public class MenuListDAO {
 
         System.out.println("=".repeat(10)+" L O G I N "+"=".repeat(10));
         System.out.print("id :");
-        String inputID = sc.next();
+        userid = sc.next();
         System.out.print("pw :");
         String inputPW = sc.next();
-        if(inputID == "S2222" && inputPW == "2222"){
+        if(userid == "S2222" && inputPW == "2222"){
             masterMenuDAO.MasterMenu();
         }
         try{
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String query = "select * from users where userid ='"+inputID+"'and password ='" + inputPW+"'";
+            String query = "select * from users where userid ='"+userid+"'and password ='" + inputPW+"'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String userID = rs.getString("userID");
@@ -233,7 +234,8 @@ public class MenuListDAO {
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
         int rod = sc.nextInt();
         if(rod ==1){
-            reserveHotel.reservation(hotelid);
+            reserveHotel.reservation(hotelid,userid);
+            reserveHotel.reserveRoom();
         } else if (rod ==2) {
             List<ReviewVO> reviews =detailHotel.detail(hotelid);
             printReviews(reviews);
@@ -320,5 +322,13 @@ public class MenuListDAO {
         }
 
         return "";
+    }
+
+    public String getUserid() {
+        return userid;
+    }
+
+    public void setUserid(String userid) {
+        this.userid = userid;
     }
 }
