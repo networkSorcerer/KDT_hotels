@@ -20,10 +20,15 @@ public class MenuListDAO {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
+    ReviewDAO reviewDao;
     List<UsersVO> list = new ArrayList<>();
     private int hotelid;
     private String userid;
+
     private int br;
+
+    ReservationDAO reservationDao;
+
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
         while(true) {
@@ -137,9 +142,10 @@ public class MenuListDAO {
                     }
                     break;
                 case 2:
-
+                    userReviewInsert();
+                    break;
                 case 3:
-
+                    // 예약 확인
                 case 4:
                     System.out.println("로그아웃!");
                     list=null;
@@ -342,6 +348,83 @@ public class MenuListDAO {
         }
 
         return "";
+    }
+
+    // 유저메뉴 - 리뷰등록
+    public void userReviewInsert(){
+        System.out.println("<리뷰 등록>");
+        List<ReservationVO> list = reservationDao.reservationList(userid);
+        reservationDao.reservationListResult(list);
+        System.out.println("--------------------------------------");
+
+        while(true){
+            System.out.print("호텔명 입력: ");
+            String hotelName = sc.next();
+            int hotelNumber = 0;
+            // 호텔명 기준으로 호텔번호 가져오기
+            for(int i=0; i<list.size(); i++){
+                if(list.get(i).getHotelName().equals(hotelName)){
+                    hotelNumber = list.get(i).getHotelID();
+                    break;
+                }
+            }
+            if(hotelNumber == 0){
+                System.out.println("일치하는 호텔이 없습니다.");
+            }else{
+                System.out.print("내용: ");
+                String content = sc.nextLine();
+                System.out.print("평점(1~5): ");
+                int star = sc.nextInt();
+
+                ReviewVO reviewVo = new ReviewVO(0, hotelid, userid, content, star);
+                if(reviewDao.reviewInsert(reviewVo)){
+                    System.out.println("리뷰가 등록되었습니다.");
+                    break;
+                }else{
+                    System.out.println("리뷰 등록이 실패했습니다.");
+                    break;
+                }
+            }
+        }
+    }
+
+    // 유저메뉴 - 예약확인
+    public void userReservationManage(){
+        System.out.println("<예약 확인>");
+        List<ReservationVO> list = reservationDao.reservationList(userid);
+        reservationDao.reservationListResult(list);
+        System.out.println("--------------------------------------");
+
+        while(true){
+            System.out.print("예약번호: ");
+            int reserveNo = sc.nextInt();
+            for(ReservationVO e : list){
+                if(reserveNo == e.getHotelID()){ // 예약번호 있으면
+                    while(true){
+                        System.out.println("[1] 예약 수정");
+                        System.out.println("[2] 예약 취소");
+                        System.out.print("입력: ");
+                        int select = sc.nextInt();
+                        if(select == 1){
+                            // 예약수정 메서드
+                            break;
+                        }else if(select == 2){
+                            if(reservationDao.reservationDelete(reserveNo)){
+                                System.out.println("예약이 취소되었습니다.");
+                                break;
+                            }else{
+                                System.out.println("예약 취소중 문제가 발생했습니다.");
+                            }
+                        }else{
+                            System.out.println("잘못된 입력입니다.");
+                        }
+                    }
+                    break;
+                }else{  // 해당 예약번호가 없으면
+                    System.out.println("해당 예약번호가 없습니다.");
+                }
+            }
+        }
     }
 
     public String getUserid() {
