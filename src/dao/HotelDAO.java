@@ -86,8 +86,8 @@ public class HotelDAO {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    int HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("삭제할 호텔의 고유번호를 입력해 주십시오 : ");
                 hotelID = sc.nextInt();
@@ -120,11 +120,12 @@ public class HotelDAO {
         Common.close(pstmt);
         Common.close(conn);
         Common.close(rs);
+        Common.close(rs2);
         Common.close(stmt);
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID;
+        int hotelID;
         int check;
         try {
             conn = Common.getConnection();
@@ -132,11 +133,11 @@ public class HotelDAO {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    int hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
-                int hotelID = sc.nextInt();
+                hotelID = sc.nextInt();
 
                 boolean isHotelIDIn = list.contains(hotelID);
                 if (!isHotelIDIn) {
@@ -177,6 +178,9 @@ public class HotelDAO {
         }
         Common.close(stmt);
         Common.close(conn);
+        Common.close(pstmt);
+        Common.close(rs);
+        Common.close(rs2);
     }
 
     public void hotelSelectRst(List<HotelVO> list){
@@ -207,6 +211,9 @@ public class HotelDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
         return avgStar;
     }
 
@@ -228,6 +235,9 @@ public class HotelDAO {
         } catch (Exception e) {
             e.printStackTrace();
         }
+        Common.close(stmt);
+        Common.close(conn);
+        Common.close(rs);
         return avgStar;
     }
 }
