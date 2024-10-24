@@ -50,15 +50,126 @@ public class HotelDAO {
     public void hotelInsert() {
         System.out.println("호텔 정보를 입력 하세요.");
         System.out.print("호텔고유번호(4자리) : ");
-        int hNo = sc.nextInt();
+        int hotelNo = sc.nextInt();
         System.out.print("이름 : ");
-        String hName = sc.next();
+        String hotelName = sc.next();
         System.out.print("지역 : ");
-        String hRegion = sc.next();
+        String hotelRegion = sc.next();
+        System.out.print("전화번호 : ");
+        String hotelPhone = sc.next();
         System.out.print("추가 설명 : ");
-        String hExpl = sc.next();
+        String hotelExpl = sc.next();
 
         String sql = "INSERT INTO HOTEL(HOTELID, HOTELNAME, REGION, PHONE, HOTELXPL) + VALUES(?,?,?,?,?)";
 
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, hotelNo);
+            pstmt.setString(2, hotelName);
+            pstmt.setString(3, hotelRegion);
+            pstmt.setString(4, hotelPhone);
+            pstmt.setString(5, hotelExpl);
+
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
     }
+    public void hotelDelete() {
+        String sqlName = "SELECT NAME FROM HOTEL WHERE HOTELID = ?";
+        String sqlDel = "DELETE FROM HOTEL WHERE HOTELID = ?";
+
+        try {
+            conn = Common.getConnection();
+            int hotelID;
+            while (true) {
+                System.out.print("삭제할 호텔의 고유번호를 입력해 주십시오 : ");
+                hotelID = sc.nextInt();
+                pstmt = conn.prepareStatement(sqlName);
+                pstmt.setInt(1, hotelID);
+                rs = pstmt.executeQuery();
+
+                System.out.println();
+                System.out.print(rs + "가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? 맞으면 숫자 1을 입력해 주십시오");
+                int check = sc.nextInt();
+
+                if (check == 1) break;
+            }
+            pstmt = conn.prepareStatement(sqlDel);
+            pstmt.setInt(1, hotelID);
+            pstmt.executeUpdate();
+            System.out.println(rs + "가 호텔 리스트에서 삭제되었습니다.");
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(pstmt);
+        Common.close(conn);
+        Common.close(rs);
+    }
+    public void hotelUpdate() {
+        System.out.print("변경할 호텔의 고유번호를 입력해 주세요.");
+        int hotelID = sc.nextInt();
+        System.out.print("호텔 이름 : ");
+        String hotelName = sc.next();
+        System.out.print("호텔 지역 : ");
+        String hotelRegion = sc.next();
+        System.out.print("호텔 전화 번호 : ");
+        String hotelPhone = sc.next();
+        System.out.print("호텔 상세 정보 : ");
+        String  hotelExpl = sc.next();
+
+        String sql = "UPDATE HOTEL SET HOTELNAME = ?, REGION = ?, PHONE = ?, HOTELEXPL = ? WHERE HOTELID = ?";
+
+        try {
+            conn = Common.getConnection();
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, hotelName);
+            pstmt.setString(2, hotelRegion);
+            pstmt.setString(3, hotelPhone);
+            pstmt.setString(4, hotelExpl);
+            pstmt.setInt(5, hotelID);
+            pstmt.executeUpdate();
+
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        Common.close(stmt);
+        Common.close(conn);
+    }
+
+    public void hotelSelectRst(List<HotelVO> list){
+        for(HotelVO e : list) {
+            System.out.print(e.getHotelID() + " ");
+            System.out.print(e.getHotelName() + " ");
+            System.out.print(e.getRegion() + " ");
+            System.out.print(e.getPhone() + " ");
+            System.out.print(e.getHotelExpl() + " ");
+        }
+    }
+
 }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
