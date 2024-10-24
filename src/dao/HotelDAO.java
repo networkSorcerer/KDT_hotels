@@ -118,8 +118,6 @@ public class HotelDAO {
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
             }
 
-
-
         } catch (Exception e) {
             e.printStackTrace();
         }
