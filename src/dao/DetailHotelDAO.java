@@ -9,7 +9,7 @@ public class DetailHotelDAO {
     public DetailHotelDAO(){
 
     }
-    public List<ReviewVO> detail(){
+    public List<ReviewVO> detail(int hotelid){
         System.out.println("상세정보를 볼까요??????");
         return List.of();
     }
