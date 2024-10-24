@@ -96,7 +96,7 @@ public class ReservationDAO {
     }
 
     // 예약 취소
-    public void reservationDelete(int reserveID){
+    public boolean reservationDelete(int reserveID){
         String sql = "DELETE FROM RESERVATION WHERE RESERVEID = ?";
 
         try {
@@ -104,8 +104,10 @@ public class ReservationDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reserveID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 방생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);
