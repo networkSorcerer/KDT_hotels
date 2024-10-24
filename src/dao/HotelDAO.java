@@ -3,6 +3,7 @@ package dao;
 import common.Common;
 import vo.HotelVO;
 
+import java.math.BigDecimal;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -78,8 +79,8 @@ public class HotelDAO {
     public void hotelDelete() {
         String sqlDel = "DELETE FROM HOTEL WHERE HOTELID = ?";
         List<Integer> list = new ArrayList<>();
-        int hotelID = 0;
-        int check =0;
+        int hotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
@@ -101,14 +102,14 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
                 if (check == 1) {
                     pstmt = conn.prepareStatement(sqlDel);
                     pstmt.setInt(1, hotelID);
                     pstmt.executeUpdate();
-                    System.out.println(rs + "가 호텔 리스트에서 삭제되었습니다.");
+                    System.out.println(rs + "이/가 호텔 리스트에서 삭제되었습니다.");
                     break;
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
@@ -124,8 +125,8 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID = 0;
-        int check = 0;
+        int HotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
@@ -146,7 +147,7 @@ public class HotelDAO {
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
-                    System.out.print(name + "가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
+                    System.out.print(name + "이/가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
 
@@ -171,7 +172,6 @@ public class HotelDAO {
                     pstmt.executeUpdate();
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
-
             }
         } catch (Exception e) {
             e.printStackTrace();
@@ -190,8 +190,48 @@ public class HotelDAO {
             System.out.println();
         }
     }
-}
+    public Double hotelStar(String hotelName) {     // 호텔의 이름을 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = '" + hotelName + "'";
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgStar;
+    }
 
+    public Double hotelStar(int hotelID) {      // 호텔의 고유 번호를 입력해서 해당 호텔 리뷰들의 평균 별점
+        List<Double> list = new ArrayList<>();
+        double avgStar = 0;
+        double sum = 0;
+        try {
+            conn = Common.getConnection();
+            stmt = conn.createStatement();
+            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = " + hotelID;
+            rs = stmt.executeQuery(sql);
+            while (rs.next()) {
+                double star = rs.getDouble("STAR");
+                list.add(star);
+                sum += star;
+            }
+            avgStar = sum / list.size();
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
+        return avgStar;
+    }
+}
 
 
 
