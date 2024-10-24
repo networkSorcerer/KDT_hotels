@@ -15,6 +15,7 @@ public class UsersDAO {
     ResultSet rs = null;
     Scanner sc = new Scanner(System.in);
 
+    // 관리자용 유저 전체 리스트 출력
     public List<UsersVO> usersList(){
         List<UsersVO> list = new ArrayList<>();
         String query = "SELECT * FROM USERS";
@@ -44,6 +45,7 @@ public class UsersDAO {
         return list;
     }
 
+    // 유저 회원가입(등록)
     public boolean usersInsert(UsersVO vo){
         String sql = "INSERT INTO USERS VALUES (?, ?, ?, ?, ?, ?)";
 
@@ -67,7 +69,8 @@ public class UsersDAO {
         }
     }
 
-    public void usersDelete(String userID){
+    // 관리자용 유저 삭제
+    public boolean usersDelete(String userID){
         String sql = "DELETE FROM USERS WHERE USER_ID = ?";
 
         try {
@@ -75,22 +78,22 @@ public class UsersDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 발생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);
         }
     }
 
+    // 유저리스트 출력구문
     public void usersListResult(List<UsersVO> list){
         for(UsersVO e : list){
-            System.out.printf("ID: %-10s|NAME: %-8s|AGE: %-2d|EMAIL: %-20s|GRADE: %1d",
+            System.out.printf("ID: %-10s|이름: %-8s|나이: %-2d|email: %-20s|등급: %1d\n",
                     e.getUserID(), e.getName(), e.getAge(), e.getEmail(), e.getGrade());
         }
     }
 
 }
-
-
-
