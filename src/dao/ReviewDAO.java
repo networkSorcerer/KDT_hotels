@@ -121,7 +121,7 @@ public class ReviewDAO {
     // 관리자 리뷰 리스트 출력구문
     public void reviewListAllResult(List<ReviewVO> list){
         for(ReviewVO e : list){
-            System.out.printf("No: %-4d|호텔번호: %-4d|유저ID: %-10s|내용: %-50s|평점: %1d\n", e.getReviewID(), e.getHotelID(), e.getUserID(), e.getContent(), e.getStar());
+            System.out.printf("No: %-4d|호텔번호: %-4d|유저ID: %-10s|평점: %1d|내용: %50s\n", e.getReviewID(), e.getHotelID(), e.getUserID(), e.getStar(), e.getContent());
         }
     }
 
