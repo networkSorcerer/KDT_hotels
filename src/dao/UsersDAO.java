@@ -70,7 +70,7 @@ public class UsersDAO {
     }
 
     // 관리자용 유저 삭제
-    public void usersDelete(String userID){
+    public boolean usersDelete(String userID){
         String sql = "DELETE FROM USERS WHERE USER_ID = ?";
 
         try {
@@ -78,8 +78,10 @@ public class UsersDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setString(1, userID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 발생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);

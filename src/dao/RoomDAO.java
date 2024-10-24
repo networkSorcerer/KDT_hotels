@@ -25,7 +25,7 @@ public class RoomDAO {
             rs = stmt.executeQuery(query);
 
             while(rs.next()) {
-                String roomID = rs.getString("ROOMID");
+                int roomID = rs.getInt("ROOMID");
                 int hotelID = rs.getInt("HOTELID");
                 String roomType = rs.getString("ROOMTYPE");
                 int price = rs.getInt("PRICE");

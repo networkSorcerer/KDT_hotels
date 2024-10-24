@@ -100,7 +100,7 @@ public class ReviewDAO {
     }
 
     // 관리자 - 리뷰 삭제
-    public void reviewDelete(int reviewID){
+    public boolean reviewDelete(int reviewID){
         String sql = "DELETE FROM REVIEW WHERE REVIEWID = ?";
 
         try {
@@ -108,8 +108,10 @@ public class ReviewDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reviewID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 발생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);
