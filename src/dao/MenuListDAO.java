@@ -5,7 +5,7 @@ import java.util.Scanner;
 public class MenuListDAO {
     Scanner sc = new Scanner(System.in);
 
-    public static void menuSelect() {
+    public void LoginMenu() {
         Scanner sc = new Scanner(System.in);
         while(true) {
             System.out.println("===== Main table =====");
