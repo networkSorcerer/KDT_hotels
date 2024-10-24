@@ -25,8 +25,8 @@ public class MasterUserManage {
             System.out.println("[2] 관리자 등록");
             System.out.println("[3] 회원 삭제");
             System.out.println("[4] 뒤로가기");
-
             int select = sc.nextInt();
+
             if(select == 1){
                 List<UsersVO> list = usersDao.usersList();
                 usersDao.usersListResult(list);
@@ -68,7 +68,7 @@ public class MasterUserManage {
     // 관리자 - 회원 삭제
     public void masterUsersDelete(){
         System.out.println("<회원 삭제>");
-        System.out.println("ID: ");
+        System.out.print("ID: ");
         String id = sc.next();
         if(usersDao.usersDelete(id)){
             System.out.println("회원 삭제가 완료되었습니다.");
