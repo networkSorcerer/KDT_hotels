@@ -16,6 +16,7 @@ public class HotelListDAO {
     Scanner sc = null;
 
     public HotelListDAO() {
+
         sc = new Scanner(System.in);
     }
     public List<HotelVO> hotelSelect() throws SQLException {
@@ -42,5 +43,20 @@ public class HotelListDAO {
             e.printStackTrace();
         }
         return list;
+    }
+    public void hotelSelectResult(List<HotelVO>list) {
+        System.out.println("---------------------------------------");
+        System.out.println("             호텔 정보");
+        System.out.println("---------------------------------------");
+
+        for(HotelVO e : list){
+            System.out.print(e.getHotelID() + " ");
+            System.out.print(e.getHotelName() + " ");
+            System.out.print(e.getRegion() + " ");
+            System.out.print(e.getPhone() + " ");
+            System.out.print(e.getHotelExpl() + " ");
+            System.out.println();
+        }
+        System.out.println("---------------------------------------");
     }
 }

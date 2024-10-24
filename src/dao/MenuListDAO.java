@@ -43,6 +43,7 @@ public class MenuListDAO {
     }
 
     public List<UsersVO>signIn() throws SQLException {
+
         System.out.println("=".repeat(10)+" L O G I N "+"=".repeat(10));
         System.out.print("id :");
         String inputID = sc.next();
@@ -115,28 +116,131 @@ public class MenuListDAO {
         Common.close(conn);
     }
     public void HotelAppMenu(List<UsersVO> Hlist) throws SQLException {
-        //System.out.println("반갑습니다 ." + Hlist.getFirst() + "회원님 원하시는 메뉴를 선택해주세요");
-        System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
-        System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
-        HotelListDAO dao = new HotelListDAO();
-        int num = sc.nextInt();
-        switch (num) {
-            case 1:
-                List<HotelVO>list = dao.hotelSelect();
-                dao.hotelSelectResult(list);
-                break;
-            case 2:
+        if(!Hlist.isEmpty()){
+            System.out.println("반갑습니다, " + Hlist.get(0).getName() + " 회원님! 원하시는 메뉴를 선택해주세요.");
+            System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
+            System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
+            HotelListDAO dao = new HotelListDAO();
+            int num = sc.nextInt();
+            switch (num) {
+                case 1:
+                    List<HotelVO> hotelList = selectRegion(); // 지역 선택 및 호텔 정보 조회
+                    if (!hotelList.isEmpty()) { // 리스트가 비어있지 않은 경우에만 출력
+                        hotelSelectResult(hotelList); // 호텔 정보 출력
+                        ReserveOrDetail();
+                    } else {
+                        System.out.println("선택한 지역에 호텔 정보가 없습니다.");
+                    }
+                    break;
+                case 2:
 
-            case 3:
+                case 3:
 
-            case 4:
-                System.out.println("로그아웃!");
-                list=null;
-                LoginMenu(); // 로그인화면
-                break;
-
+                case 4:
+                    System.out.println("로그아웃!");
+                    list=null;
+                    LoginMenu(); // 로그인화면
+                    break;
+            }
+        }else {
+            System.out.println("일치하는 정보가 없습니다.");
         }
+
     }
+    public static List<HotelVO> selectRegion() { // 반환 타입을 List<HotelVO>로 변경
+        Scanner sc = new Scanner(System.in);
+        HotelListDAO dao = new HotelListDAO();
+
+        int choice = 0; // 사용자의 선택을 저장할 변수
+        while (true) {
+            System.out.println("=".repeat(10) + " 지역 선택 " + "=".repeat(10));
+            System.out.println("지역을 선택하세요 : ");
+            System.out.println("[1] 서울\n" + "[2] 부산\n" +
+                    "[3] 제주\n" +
+                    "[4] 인천\n" +
+                    "[5] 여수\n" +
+                    "[6] 수원\n" +
+                    "[7] 대전\n" +
+                    "[8] 광주\n" +
+                    "[9] 대구\n" +
+                    "[10] 속초");
+            choice = sc.nextInt();
+
+            if (choice >= 1 && choice <= 10) {
+                break; // 유효한 입력일 경우 루프 종료
+            } else {
+                System.out.println("유효한 선택이 아닙니다. 다시 시도하세요.");
+            }
+        }
+
+        List<HotelVO> list = new ArrayList<>(); // 호텔 정보를 저장할 리스트
+        String[] regions = {"서울", "부산", "제주", "인천", "여수", "수원", "대전", "광주", "대구", "속초"};
+        String selectedRegion = regions[choice - 1]; // 선택한 지역의 이름
+
+        // DB 연결 및 호텔 정보 조회
+        try (Connection conn = Common.getConnection(); // DB 연결
+             PreparedStatement psmt = conn.prepareStatement("SELECT * FROM hotel WHERE region = ?")) {
+
+            psmt.setString(1, selectedRegion); // 지역 매개변수 설정
+            ResultSet rs = psmt.executeQuery();
+
+            while (rs.next()) {
+                int hotelID = rs.getInt("hotelID");
+                String hotelName = rs.getString("hotelName");
+                String region = rs.getString("region");
+                String phone = rs.getString("phone");
+                String hotelExpl = rs.getString("hotelExpl");
+                HotelVO vo = new HotelVO(hotelID, hotelName, region, phone, hotelExpl);
+                list.add(vo); // 리스트에 호텔 정보 추가
+            }
+        } catch (Exception e) {
+            System.out.println("호텔 조회 실패 !!!");
+            e.printStackTrace();
+        }
+        return list; // 호텔 리스트 반환
+    }
+
+    public void hotelSelectResult(List<HotelVO> list) { // 호텔 정보를 출력하는 메소드
+        System.out.println("---------------------------------------");
+        System.out.println("             호텔 정보");
+        System.out.println("---------------------------------------");
+
+        // 리스트의 모든 호텔 정보를 출력
+        for (HotelVO e : list) {
+            System.out.print(e.getHotelID() + " "); // 호텔 ID 출력
+            System.out.print(e.getHotelName() + " "); // 호텔 이름 출력
+            System.out.print(e.getRegion() + " "); // 지역 출력
+            System.out.print(e.getPhone() + " "); // 전화번호 출력
+            System.out.print(e.getHotelExpl() + " "); // 호텔 설명 출력
+            System.out.println();
+        }
+        System.out.println("---------------------------------------");
+    }
+    public void chooseHotel(){
+
+    }
+
+    public void ReserveOrDetail(){
+        ReserveHotelDAO reserveHotel = new ReserveHotelDAO();
+        DetailHotelDAO detailHotel = new DetailHotelDAO();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("메뉴를 선택하세요(숫자)");
+        System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
+        int rod = sc.nextInt();
+        if(rod ==1){
+            reserveHotel.reservation();
+        } else if (rod ==2) {
+            detailHotel.detail();
+        }else if(rod ==3) {
+            selectRegion();
+        }
+
+
+
+    }
+
+
+
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
         Pattern passPattern1 = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$");
