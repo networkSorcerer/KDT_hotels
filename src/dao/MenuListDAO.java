@@ -2,6 +2,7 @@ package dao;
 
 import common.Common;
 import vo.HotelVO;
+import vo.ReviewVO;
 import vo.UsersVO;
 
 import java.sql.*;
@@ -19,7 +20,7 @@ public class MenuListDAO {
     ResultSet rs = null;
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     List<UsersVO> list = new ArrayList<>();
-
+    private int hotelid;
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
         while(true) {
@@ -215,12 +216,16 @@ public class MenuListDAO {
             System.out.println();
         }
         System.out.println("---------------------------------------");
+        chooseHotel();
     }
     public void chooseHotel(){
-
+        Scanner sc = new Scanner(System.in);
+        System.out.println("호텔 ID를 입력하세요 : ");
+        hotelid = sc.nextInt();
     }
 
     public void ReserveOrDetail(){
+
         ReserveHotelDAO reserveHotel = new ReserveHotelDAO();
         DetailHotelDAO detailHotel = new DetailHotelDAO();
         Scanner sc = new Scanner(System.in);
@@ -228,17 +233,21 @@ public class MenuListDAO {
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
         int rod = sc.nextInt();
         if(rod ==1){
-            reserveHotel.reservation();
+            reserveHotel.reservation(hotelid);
         } else if (rod ==2) {
-            detailHotel.detail();
+            List<ReviewVO> reviews =detailHotel.detail(hotelid);
+            printReviews(reviews);
         }else if(rod ==3) {
             selectRegion();
         }
-
-
-
     }
 
+    private void printReviews(List<ReviewVO> reviews) {
+        // 리뷰 출력 로직
+        for (ReviewVO review : reviews) {
+            System.out.println(review);
+        }
+    }
 
 
     private String checkPassword(String pwd, String id){
