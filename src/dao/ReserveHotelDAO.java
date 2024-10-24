@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class ReserveHotelDAO {
     Connection conn = null;
     PreparedStatement psmt = null;
+    Statement stmt = null;
     ResultSet rs = null;
     Scanner sc = null;
 
@@ -36,32 +37,34 @@ public class ReserveHotelDAO {
         String query = "SELECT r.roomID, r.hotelID, r.roomType, r.price, r.roomNumber " +
                 "FROM room r " +
                 "LEFT JOIN reservation v ON r.roomid = v.roomid " +
-                "AND (v.startDate <= TO_DATE(?, 'YYYY-MM-DD') AND v.endDate >= TO_DATE(?, 'YYYY-MM-DD')) " +
-                "WHERE r.hotelID = ? " +
-                "AND r.roomType = ? " +
-                "AND v.roomid IS NULL";
+                "WHERE r.hotelID = " +hotelid+
+                "AND r.roomType = '" +selectType+"'"+
+                "AND (v.roomid IS NULL OR (v.endDate < TO_DATE('" +checkin+"', 'YYYY-MM-DD') OR v.startDate > TO_DATE('"+checkout+"', 'YYYY-MM-DD')))";
+
 
         try {
             conn = Common.getConnection();
-            psmt = conn.prepareStatement(query);
-            psmt.setString(1, checkin);
-            psmt.setString(2, checkout);
-            psmt.setInt(3, hotelid);
-            psmt.setString(4, selectType);
+//            psmt = conn.prepareStatement(query);
+//            psmt.setInt(1, hotelid);
+//            psmt.setString(2, selectType);
+//            psmt.setString(3, checkin);
+//            psmt.setString(4, checkout);
+            stmt = conn.createStatement();
 
-            rs = psmt.executeQuery();
+            rs = stmt.executeQuery(query);
 
             // 결과를 리스트에 추가
             while (rs.next()) {
-                int roomID = rs.getInt("roomID");
-                int hotelID = rs.getInt("hotelID");
-                String roomTypeStr = rs.getString("roomType");
-                int price = rs.getInt("price");
-                int roomNumber = rs.getInt("roomNumber");
+                int roomID = rs.getInt("ROOMID");
+                int hotelID = rs.getInt("HOTELID");
+                String roomTypeStr = rs.getString("ROOMTYPE");
+                int price = rs.getInt("PRICE");
+                int roomNumber = rs.getInt("ROOMNUMBER");
 
                 ReservationVO vo = new ReservationVO(roomID, hotelID, roomTypeStr, price, roomNumber);
                 list.add(vo);
             }
+
 
         } catch (SQLException e) {
             e.printStackTrace();
@@ -75,7 +78,7 @@ public class ReserveHotelDAO {
     }
 
     // 예약 가능한 방 목록 출력
-    public void reserveRoom() {
+    public void reserveRoom(List<ReservationVO> list) {
         System.out.println("---------------------------------------");
         System.out.println("             예약 가능한 방 리스트");
         System.out.println("---------------------------------------");
