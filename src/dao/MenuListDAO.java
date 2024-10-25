@@ -8,6 +8,7 @@ import vo.UsersVO;
 import java.sql.*;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -50,8 +51,8 @@ public class MenuListDAO {
         String inputID = sc.next();
         System.out.print("pw :");
         String inputPW = sc.next();
-        if(inputID == "S2222" && inputPW == "2222"){
-            masterMenuDAO.MasterMenu();
+        if(Objects.equals(inputID, "S2222") && Objects.equals(inputPW, "2222")){
+            MasterMenuDAO.MasterMenu();
         }
         try{
             conn = Common.getConnection();

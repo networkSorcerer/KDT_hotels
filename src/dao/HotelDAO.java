@@ -16,6 +16,34 @@ public class HotelDAO {
     ResultSet rs2 = null;
     Scanner sc = new Scanner(System.in);
 
+    public static void MaterHotelMenu() {
+        Scanner sc = new Scanner(System.in);
+        HotelDAO hDao = new HotelDAO();
+        System.out.println("===================");
+        System.out.println("   호텔 관리 메뉴");
+        System.out.println("[1]호텔 리스트 확인 [2]호텔등록 [3]호텔수정 [4]호텔삭제 [5]돌아가기");
+
+        int mHotelSel = sc.nextInt();
+        switch (mHotelSel) {
+            case 1:
+                List<HotelVO> list = hDao.hotelSelectAll();
+                hDao.hotelSelectRst(list);
+                break;
+            case 2:
+                hDao.hotelInsert();
+                break;
+            case 3:
+                hDao.hotelUpdate();
+                break;
+            case 4:
+                hDao.hotelDelete();
+                break;
+            case 5:
+                break;
+
+        }
+    }
+
     public List<HotelVO> hotelSelectAll() {
         List<HotelVO> list = new ArrayList<>();
         try {
@@ -124,8 +152,8 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID = 0;
-        int check = 0;
+        int HotelID;
+        int check;
         try {
             conn = Common.getConnection();
             while (true) {
