@@ -49,7 +49,7 @@ public class ReviewDAO {
     // 호텔 상세보기 시 호텔 번호 가져와서 해당 리뷰 리스트 출력함
     public List<ReviewVO> hotelReviewList(int hotelNo){
         List<ReviewVO> list = new ArrayList<>();
-        String query = "SELECT * FROM REVIEW WHERE HOTELID = ?";
+        String query = "SELECT * FROM REVIEWS WHERE HOTELID = ?";
 
         try {
             conn = Common.getConnection();
