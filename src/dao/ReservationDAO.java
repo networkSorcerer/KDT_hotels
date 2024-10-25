@@ -36,7 +36,7 @@ public class ReservationDAO {
                 String hotelName = rs.getString("HOTELNAME");
                 Date startDate = rs.getDate("STARTDATE");
                 Date endDate = rs.getDate("ENDDATE");
-                String roomID = rs.getString("ROOMID");
+                int roomID = rs.getInt("ROOMID");
 
                 ReservationVO vo = new ReservationVO(reserveID, userID, hotelID, hotelName, startDate, endDate, roomID);
                 list.add(vo);
@@ -61,7 +61,7 @@ public class ReservationDAO {
             pstmt.setInt(2, vo.getHotelID());
             pstmt.setDate(3, vo.getStartDate());
             pstmt.setDate(4, vo.getEndDate());
-            pstmt.setString(5, vo.getRoomID());
+            pstmt.setInt(5, vo.getRoomID());
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
             return true;
         } catch (SQLException e) {
@@ -82,7 +82,7 @@ public class ReservationDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setDate(1, vo.getStartDate());
             pstmt.setDate(2, vo.getEndDate());
-            pstmt.setString(3, vo.getRoomID());
+            pstmt.setInt(3, vo.getRoomID());
             pstmt.setInt(4, vo.getReserveID());
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
             return true;
@@ -96,7 +96,7 @@ public class ReservationDAO {
     }
 
     // 예약 취소
-    public void reservationDelete(int reserveID){
+    public boolean reservationDelete(int reserveID){
         String sql = "DELETE FROM RESERVATION WHERE RESERVEID = ?";
 
         try {
@@ -104,8 +104,10 @@ public class ReservationDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reserveID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 방생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);

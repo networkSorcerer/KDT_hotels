@@ -101,6 +101,7 @@ public class ReviewDAO {
     }
 
     // 관리자 - 리뷰 삭제
+
     public void reviewDelete(int reviewID){
         String sql = "DELETE FROM REVIEWS WHERE REVIEWID = ?";
 
@@ -109,8 +110,10 @@ public class ReviewDAO {
             pstmt = conn.prepareStatement(sql);
             pstmt.setInt(1, reviewID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            return true;
         } catch (SQLException e) {
             System.out.println("DELETE 에러 발생.");
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);
@@ -120,7 +123,7 @@ public class ReviewDAO {
     // 관리자 리뷰 리스트 출력구문
     public void reviewListAllResult(List<ReviewVO> list){
         for(ReviewVO e : list){
-            System.out.printf("No: %-4d|호텔번호: %-4d|유저ID: %-10s|내용: %-50s|평점: %1d\n", e.getReviewID(), e.getHotelID(), e.getUserID(), e.getContent(), e.getStar());
+            System.out.printf("No: %-4d|호텔번호: %-4d|유저ID: %-10s|평점: %1d|내용: %50s\n", e.getReviewID(), e.getHotelID(), e.getUserID(), e.getStar(), e.getContent());
         }
     }
 
