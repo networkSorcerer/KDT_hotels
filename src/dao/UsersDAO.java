@@ -70,7 +70,7 @@ public class UsersDAO {
     }
 
     // 관리자용 유저 삭제
-    public void usersDelete(String userID){
+    public boolean usersDelete(String userID){
         String sql = "DELETE FROM USERS WHERE USERID = ?";
 
         try {
@@ -84,6 +84,7 @@ public class UsersDAO {
             Common.close(pstmt);
             Common.close(conn);
         }
+        return false;
     }
 
     // 유저리스트 출력구문

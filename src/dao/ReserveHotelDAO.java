@@ -32,7 +32,7 @@ public class ReserveHotelDAO {
         int roomType = sc.nextInt();
         String[] type = {"베이직", "스위트", "럭셔리"};
         String selectType = type[roomType - 1];
-
+        System.out.println();
         startD = getValidDate(sc, "시작 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
         endD = getValidDate(sc, "종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
 

@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MasterMenuDAO {
-
+    static String mName = null;
 
 
     public static void MasterMenu(){
@@ -41,6 +41,8 @@ public class MasterMenuDAO {
                         mDao.MasterUserManage();
                         break;
                     case 4:
+                        System.out.println("안녕히가세요." +mName+"님");
+
                         System.out.println("프로그램을 종료합니다.");
                         return;
                 }
@@ -63,7 +65,7 @@ public class MasterMenuDAO {
         System.out.print("관리자 PW : ");
         String mPw = sc.next();
 
-        String mLoginsSql = "SELECT USERID FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
+        String mLoginsSql = "SELECT NAME FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
 
         List<String> list = new ArrayList<>();
         String mName = null;
@@ -72,7 +74,7 @@ public class MasterMenuDAO {
             stmt = conn.createStatement();
             rs = stmt.executeQuery(mLoginsSql);
             while (rs.next()) {
-                mName = rs.getString("USERID");
+                mName = rs.getString("NAME");
                 list.add(mName);
             }
             if (list.isEmpty()) {
