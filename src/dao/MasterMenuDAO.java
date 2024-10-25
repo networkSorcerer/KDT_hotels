@@ -40,7 +40,7 @@ public class MasterMenuDAO {
                         mDao.MasterUserManage();
                         break;
                     case 4:
-                        System.out.println("안녕히가세요."+mName+"님");
+                        System.out.println("안녕히가세요. 관리자 "+mName+"님");
                         mName = null;
                         System.out.println("프로그램을 종료합니다.");
                         return;
