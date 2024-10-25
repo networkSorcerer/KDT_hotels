@@ -26,6 +26,8 @@ public class MenuListDAO {
     List<UsersVO> list = new ArrayList<>();
     private int hotelid;
     private String userid;
+    String startD;
+    String endD;
 
     private int br;
 
@@ -132,6 +134,7 @@ public class MenuListDAO {
             System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
             System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
             HotelListDAO dao = new HotelListDAO();
+            ReviewDAO rdao = new ReviewDAO();
             int num = sc.nextInt();
             switch (num) {
                 case 1:
@@ -144,7 +147,8 @@ public class MenuListDAO {
                     }
                     break;
                 case 2:
-                    userReviewInsert();
+                    List<ReviewVO> list = rdao.reviewListAll();
+                    rdao.reviewResult(list);
                     break;
                 case 3:
                     // 예약 확인
@@ -238,7 +242,7 @@ public class MenuListDAO {
     public void ReserveOrDetail(){
 
         ReserveHotelDAO reserveHotel = new ReserveHotelDAO();
-        DetailHotelDAO detailHotel = new DetailHotelDAO();
+        ReviewDAO rdao = new ReviewDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("메뉴를 선택하세요(숫자)");
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
@@ -255,8 +259,8 @@ public class MenuListDAO {
                 System.out.println("해당 기간에 예약 가능한 방이 없습니다.");
             }
         } else if (rod ==2) {
-            List<ReviewVO> reviews =detailHotel.detail(hotelid);
-            printReviews(reviews);
+            List<ReviewVO> reviews =rdao.hotelReviewList(hotelid);
+            rdao.reviewResult(reviews);
         }else if(rod ==3) {
             selectRegion();
         }
@@ -273,7 +277,6 @@ public class MenuListDAO {
         Scanner sc = new Scanner(System.in);
         System.out.println("예약하실 roomID를 입력해주세요 : ");
         br = sc.nextInt();
-        reserveHotelDAO.BookARoom1(br,hotelid,userid);
         boolean isSuccess = reserveHotelDAO.BookARoom1(br,hotelid,userid);
         if(isSuccess)System.out.println("예약에 성공하였습니다.");
         else System.out.println("사원등록에 실패했습니다.");
