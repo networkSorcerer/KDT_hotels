@@ -7,6 +7,8 @@ import vo.ReviewVO;
 import vo.UsersVO;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -271,13 +273,29 @@ public class MenuListDAO {
         Scanner sc = new Scanner(System.in);
         System.out.println("예약하실 roomID를 입력해주세요 : ");
         br = sc.nextInt();
-        reserveHotelDAO.BookARoom(br,hotelid,userid);
-        boolean isSuccess = reserveHotelDAO.BookARoom(br,hotelid,userid);
+        reserveHotelDAO.BookARoom1(br,hotelid,userid);
+        boolean isSuccess = reserveHotelDAO.BookARoom1(br,hotelid,userid);
         if(isSuccess)System.out.println("예약에 성공하였습니다.");
         else System.out.println("사원등록에 실패했습니다.");
 
     }
 
+    public static String getValidDate(Scanner scanner, String prompt) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // 엄격한 형식 검사를 위해 설정
+
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            try {
+                // 입력받은 문자열이 유효한 날짜 형식인지 검사
+                dateFormat.parse(input);
+                return input; // 유효한 형식일 경우 입력값 반환
+            } catch (ParseException e) {
+                System.out.println("잘못된 날짜 형식입니다. 다시 입력하세요.");
+            }
+        }
+    }
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
         Pattern passPattern1 = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$");
@@ -427,11 +445,5 @@ public class MenuListDAO {
         }
     }
 
-    public String getUserid() {
-        return userid;
-    }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
 }
