@@ -16,21 +16,16 @@ public class ReserveHotelDAO {
     PreparedStatement psmt = null;
     Statement stmt = null;
     ResultSet rs = null;
-    String startD;
-    String endD;
-    Scanner sc;
+    static String startD;
+    static String endD;
+    Scanner sc = new Scanner(System.in);
 
 
-
-    public ReserveHotelDAO() {
-
-        sc = new Scanner(System.in);
-    }
 
     // 예약 가능한 방을 조회하고 리스트로 반환
     public List<ReservationVO> reservation(int hotelid, String userid) {
 
-        Scanner sc = new Scanner(System.in);
+        //Scanner sc =new Scanner(System.in);
         List<ReservationVO> list = new ArrayList<>();
 
         System.out.println("[1]베이직 (1인) [2]스위트 (2인) [3]럭셔리 (4인)");
@@ -113,7 +108,13 @@ public class ReserveHotelDAO {
     public boolean BookARoom1(int br,int hotelid, String userID) {
         String sql = "INSERT INTO reservation (reserveID, userID, hotelID, roomID, startDate, endDate) " +
                 "VALUES (reservation_seq.nextval, ?, ?, ?, TO_DATE(?, 'YYYY-MM-DD'), TO_DATE(?, 'YYYY-MM-DD'))";
-
+        // Reserve DAO 객체 통해서
+        // getter setter 통해서
+//        ReserveHotelDAO dao = new ReserveHotelDAO();
+//        startD = dao.startD;
+//        endD = dao.endD;
+        System.out.println(startD);
+        System.out.println(endD);
         try {
             conn = Common.getConnection();
             psmt = conn.prepareStatement(sql);
