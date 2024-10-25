@@ -156,6 +156,7 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
+
         int hID;
         int check;
         try {
@@ -167,7 +168,9 @@ public class HotelDAO {
                     hID = rs2.getInt("HOTELID");
                     list.add(hID);
                 }
+
                 System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
+
                 int cHotelID = sc.nextInt();
 
                 boolean isHotelIDIn = list.contains(cHotelID);
@@ -183,29 +186,33 @@ public class HotelDAO {
                 check = sc.nextInt();
                 sc.nextLine();
 
-                if (check == 1) {
-                    System.out.print("호텔 이름 : ");
-                    String hotelName = sc.nextLine();
-                    System.out.print("호텔 지역 : ");
-                    String hotelRegion = sc.nextLine();
-                    System.out.print("호텔 전화 번호 : ");
-                    String hotelPhone = sc.nextLine();
-                    System.out.print("호텔 상세 정보 : ");
-                    String hotelExpl = sc.nextLine();
+                switch (check) {
+                    case 1:
+                        System.out.print("호텔 이름 : ");
+                        String hotelName = sc.nextLine();
+                        System.out.print("호텔 지역 : ");
+                        String hotelRegion = sc.nextLine();
+                        System.out.print("호텔 전화 번호 : ");
+                        String hotelPhone = sc.nextLine();
+                        System.out.print("호텔 상세 정보 : ");
+                        String hotelExpl = sc.nextLine();
 
-                    String sql = "UPDATE HOTEL SET HOTELNAME = ?, REGION = ?, PHONE = ?, HOTELEXPL = ? WHERE HOTELID = ?";
+                        String sql = "UPDATE HOTEL SET HOTELNAME = ?, REGION = ?, PHONE = ?, HOTELEXPL = ? WHERE HOTELID = ?";
 
-                    pstmt = conn.prepareStatement(sql);
-                    pstmt.setString(1, hotelName);
-                    pstmt.setString(2, hotelRegion);
-                    pstmt.setString(3, hotelPhone);
-                    pstmt.setString(4, hotelExpl);
-                    pstmt.setInt(5, cHotelID);
-                    pstmt.executeUpdate();
-                    break;
+                        pstmt = conn.prepareStatement(sql);
+                        pstmt.setString(1, hotelName);
+                        pstmt.setString(2, hotelRegion);
+                        pstmt.setString(3, hotelPhone);
+                        pstmt.setString(4, hotelExpl);
+                        pstmt.setInt(5, cHotelID);
+                        pstmt.executeUpdate();
+                        break;
+                    case 2:
+                        break;
+                    case 3:
+                        return;
+                }
 
-                } else if (check == 3) break;
-                else if (check != 2) System.out.println("잘못 입력하셨습니다.");
             }
         } catch (Exception e) {
             e.printStackTrace();

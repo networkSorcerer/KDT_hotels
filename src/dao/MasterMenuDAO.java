@@ -40,8 +40,10 @@ public class MasterMenuDAO {
                         mDao.MasterUserManage();
                         break;
                     case 4:
+
                         System.out.println("안녕히가세요."+mName+"님");
                         mName = null;
+
                         System.out.println("프로그램을 종료합니다.");
                         return;
                 }
@@ -63,7 +65,9 @@ public class MasterMenuDAO {
         String mID = sc.next();
         System.out.print("관리자 PW : ");
         String mPw = sc.next();
+
         String mLoginsSql = "SELECT NAME FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
+
         List<String> list = new ArrayList<>();
 
         try {

@@ -157,7 +157,7 @@ public class MenuListDAO {
                     // 예약 확인
                 case 4:
                     System.out.println("로그아웃!");
-                    list=null;
+                    userid=null;
                     LoginMenu(); // 로그인화면
                     break;
             }
@@ -250,7 +250,8 @@ public class MenuListDAO {
         System.out.println("메뉴를 선택하세요(숫자)");
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
         int rod = sc.nextInt();
-        if(rod ==1){
+        switch (rod) {
+            case 1 :
             // 예약 가능한 방 리스트 조회
             List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid, userid);
 
@@ -261,28 +262,28 @@ public class MenuListDAO {
             } else {
                 System.out.println("해당 기간에 예약 가능한 방이 없습니다.");
             }
-        } else if (rod ==2) {
+            break;
+            case 2 :
             List<ReviewVO> reviews =rdao.hotelReviewList(hotelid);
             rdao.reviewResult(reviews);
-        }else if(rod ==3) {
+            break;
+            case 3 :
             selectRegion();
+            break;
         }
     }
 
-    private void printReviews(List<ReviewVO> reviews) {
-        // 리뷰 출력 로직
-        for (ReviewVO review : reviews) {
-            System.out.println(review);
-        }
-    }
     public void BookARoom(){
         ReserveHotelDAO reserveHotelDAO = new ReserveHotelDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("예약하실 roomID를 입력해주세요 : ");
         br = sc.nextInt();
         boolean isSuccess = reserveHotelDAO.BookARoom1(br,hotelid,userid);
-        if(isSuccess)System.out.println("예약에 성공하였습니다.");
-        else System.out.println("사원등록에 실패했습니다.");
+        if(isSuccess) {
+            System.out.println("예약에 성공하였습니다.");
+        } else {
+            System.out.println("예약등록에 실패했습니다.");
+        }
 
     }
 
@@ -298,7 +299,7 @@ public class MenuListDAO {
                 dateFormat.parse(input);
                 return input; // 유효한 형식일 경우 입력값 반환
             } catch (ParseException e) {
-                System.out.println("잘못된 날짜 형식입니다. 다시 입력하세요.");
+                System.out.println("올바른 형식을 입력해주세요.");
             }
         }
     }
