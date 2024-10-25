@@ -12,7 +12,7 @@ import java.util.List;
 import java.util.Scanner;
 
 public class MasterMenuDAO {
-
+    static String mName = null;
 
 
     public static void MasterMenu(){
@@ -28,7 +28,6 @@ public class MasterMenuDAO {
                 System.out.println("=====================");
                 System.out.println("관리자 메뉴를 선택하세요.");
                 System.out.println("[1]호텔관리 [2]리뷰관리 [3]회원관리 [4]로그아웃");
-              
                 int menuSel = sc.nextInt();
                 switch (menuSel) {
                     case 1:
@@ -41,6 +40,8 @@ public class MasterMenuDAO {
                         mDao.MasterUserManage();
                         break;
                     case 4:
+                        System.out.println("안녕히가세요."+mName+"님");
+                        mName = null;
                         System.out.println("프로그램을 종료합니다.");
                         return;
                 }
@@ -62,17 +63,15 @@ public class MasterMenuDAO {
         String mID = sc.next();
         System.out.print("관리자 PW : ");
         String mPw = sc.next();
-
-        String mLoginsSql = "SELECT USERID FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
-
+        String mLoginsSql = "SELECT NAME FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
         List<String> list = new ArrayList<>();
-        String mName = null;
+
         try {
             conn = Common.getConnection();
             stmt = conn.createStatement();
             rs = stmt.executeQuery(mLoginsSql);
             while (rs.next()) {
-                mName = rs.getString("USERID");
+                mName = rs.getString("NAME");
                 list.add(mName);
             }
             if (list.isEmpty()) {
@@ -102,7 +101,7 @@ public class MasterMenuDAO {
                     rDao.reviewListAllResult(list);
                     break;
                 case 2:
-                    System.out.println("삭제할 리뷰의 고유 ID를 입력해 주십시오 :");
+                    System.out.print("삭제할 리뷰의 고유 ID를 입력해 주십시오 :");
                     int delReview = sc.nextInt();
                     rDao.reviewDelete(delReview);
                     break;
@@ -115,7 +114,7 @@ public class MasterMenuDAO {
         Scanner sc = new Scanner(System.in);
         UsersDAO uDao = new UsersDAO();
         while (true) {
-            System.out.println("===========================================================");
+            System.out.println("=============================================================");
             System.out.println("                       이용자 관리 메뉴");
             System.out.println("[1]모든 회원 리스트 출력 [2]신규 관리자 등록 [3]회원 삭제 [4]돌아가기" );
             int i = sc.nextInt();
@@ -131,7 +130,8 @@ public class MasterMenuDAO {
                 case 3:
                     System.out.print("삭제하고 싶은 유저의 ID를 입력해 주세요 : ");
                     String del = sc.next();
-                    uDao.usersDelete(del);
+                    if (uDao.usersDelete(del)) System.out.println(del+" 유저가 삭제되었습니다.");
+                    else System.out.println("유저 삭제에 실패하였습니다.");
                     break;
                 case 4:
                     return;
