@@ -18,7 +18,7 @@ public class ReviewDAO {
     // 관리자 리뷰리스트
     public List<ReviewVO> reviewListAll() {
         List<ReviewVO> list = new ArrayList<>();
-        String query = "SELECT * FROM REVIEW";
+        String query = "SELECT * FROM REVIEWS";
 
         try {
             conn = Common.getConnection();
@@ -39,7 +39,8 @@ public class ReviewDAO {
             Common.close(stmt);
             Common.close(conn);
         } catch (SQLException e) {
-            System.out.println("SELECT 에러 방생.");
+            e.printStackTrace();
+            System.out.println("SELECT 에러1 발생.");
         }
         return list;
     }
@@ -101,7 +102,7 @@ public class ReviewDAO {
 
     // 관리자 - 리뷰 삭제
     public void reviewDelete(int reviewID){
-        String sql = "DELETE FROM REVIEW WHERE REVIEWID = ?";
+        String sql = "DELETE FROM REVIEWS WHERE REVIEWID = ?";
 
         try {
             conn = Common.getConnection();

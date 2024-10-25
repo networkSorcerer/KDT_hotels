@@ -6,11 +6,11 @@ import java.sql.ResultSet;
 import java.sql.Statement;
 
 public class Common {
-    final static String ORACLE_URL = "jdbc:oracle:thin:@//localhost:1521/XEPDB1"; // SERVICE_NAME 방식 사용
+    final static String ORACLE_URL = "jdbc:oracle:thin:@//localhost:1521/XE"; // SERVICE_NAME 방식 사용
     //sid에 접속할시
     //final static String ORACLE_URL = "jdbc:oracle:thin:@localhost:1521:xe";
-    final static String ORACLE_ID = "scott";
-    final static String ORACLE_PW = "tiger";
+    final static String ORACLE_ID = "SCOTT";
+    final static String ORACLE_PW = "TIGER";
     final static String ORACLE_DRV = "oracle.jdbc.driver.OracleDriver";
 
     public static Connection getConnection() {
