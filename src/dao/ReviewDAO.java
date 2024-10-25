@@ -18,7 +18,7 @@ public class ReviewDAO {
     // 관리자 리뷰리스트
     public List<ReviewVO> reviewListAll() {
         List<ReviewVO> list = new ArrayList<>();
-        String query = "SELECT * FROM REVIEW";
+        String query = "SELECT * FROM REVIEWS";
 
         try {
             conn = Common.getConnection();
@@ -39,24 +39,25 @@ public class ReviewDAO {
             Common.close(stmt);
             Common.close(conn);
         } catch (SQLException e) {
-            System.out.println("SELECT 에러 방생.");
+            e.printStackTrace();
+            System.out.println("SELECT 에러1 발생.");
         }
         return list;
     }
 
     // 유저 호텔 상세보기 - 리뷰리스트
     // 호텔 상세보기 시 호텔 번호 가져와서 해당 리뷰 리스트 출력함
-    public List<ReviewVO> hotelReviewList(int hotelNo){
+    public List<ReviewVO> hotelReviewList(int hotelNo) {
         List<ReviewVO> list = new ArrayList<>();
-        String query = "SELECT * FROM REVIEW WHERE HOTELID = ?";
+        String query = "SELECT * FROM REVIEWS WHERE HOTELID = ?";
 
         try {
             conn = Common.getConnection();
             pstmt = conn.prepareStatement(query);
             pstmt.setInt(1, hotelNo);
-            rs = pstmt.executeQuery(query);
+            rs = pstmt.executeQuery();
 
-            while(rs.next()){
+            while(rs.next()) {
                 int reviewID = rs.getInt("REVIEWID");
                 int hotelID = rs.getInt("HOTELID");
                 String userID = rs.getString("USERID");
@@ -66,18 +67,21 @@ public class ReviewDAO {
                 ReviewVO vo = new ReviewVO(reviewID, hotelID, userID, content, star);
                 list.add(vo);
             }
-            Common.close(rs);
-            Common.close(stmt);
-            Common.close(conn);
         } catch (SQLException e) {
-            System.out.println("SELECT 에러 방생.");
+            System.out.println("SELECT 에러 발생.");
+        } finally {
+            Common.close(rs);
+            Common.close(pstmt);
+            Common.close(conn);
         }
+
         return list;
     }
 
+
     // 유저 리뷰 등록
     public boolean reviewInsert(ReviewVO vo){
-        String sql = "INSERT INTO REVIEW VALUES(" +
+        String sql = "INSERT INTO REVIEWS VALUES(" +
                 "REVIEWS_SEQ.NEXTVAL,?,?,?,?)";
 
         try {
@@ -100,8 +104,9 @@ public class ReviewDAO {
     }
 
     // 관리자 - 리뷰 삭제
-    public boolean reviewDelete(int reviewID){
-        String sql = "DELETE FROM REVIEW WHERE REVIEWID = ?";
+
+    public void reviewDelete(int reviewID){
+        String sql = "DELETE FROM REVIEWS WHERE REVIEWID = ?";
 
         try {
             conn = Common.getConnection();
@@ -132,4 +137,20 @@ public class ReviewDAO {
             System.out.printf("%5s(평점:%1d): %50s", IDstr, e.getStar(), e.getContent());
         }
     }
+    public void reviewResult(List<ReviewVO>list) {
+        System.out.println("---------------------------------------");
+        System.out.println("             리뷰 정보");
+        System.out.println("---------------------------------------");
+
+        for(ReviewVO e : list){
+            System.out.print(e.getReviewID() + " ");
+            System.out.print(e.getHotelID() + " ");
+            System.out.print(e.getUserID() + " ");
+            System.out.print(e.getContent() + " ");
+            System.out.print(e.getStar() + " ");
+            System.out.println();
+        }
+        System.out.println("---------------------------------------");
+    }
+
 }

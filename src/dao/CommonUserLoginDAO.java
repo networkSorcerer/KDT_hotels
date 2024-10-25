@@ -19,8 +19,11 @@ public class CommonUserLoginDAO {
     public static String nick;
     Scanner sc = new Scanner(System.in);
 
+
     public List<UsersVO> signIn() {
 
+        return List.of();
     }
+
 
 }

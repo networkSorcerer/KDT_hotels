@@ -7,8 +7,11 @@ import vo.ReviewVO;
 import vo.UsersVO;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -24,6 +27,11 @@ public class MenuListDAO {
     List<UsersVO> list = new ArrayList<>();
     private int hotelid;
     private String userid;
+    String startD;
+    String endD;
+
+    private int br;
+
     ReservationDAO reservationDao;
 
     public void LoginMenu() throws SQLException {
@@ -55,8 +63,10 @@ public class MenuListDAO {
         userid = sc.next();
         System.out.print("pw :");
         String inputPW = sc.next();
-        if(userid == "S2222" && inputPW == "2222"){
-            masterMenuDAO.MasterMenu();
+
+        if(Objects.equals(inputID, "S2222") && Objects.equals(inputPW, "2222")){
+            MasterMenuDAO.MasterMenu();
+
         }
         try{
             conn = Common.getConnection();
@@ -127,6 +137,7 @@ public class MenuListDAO {
             System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
             System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
             HotelListDAO dao = new HotelListDAO();
+            ReviewDAO rdao = new ReviewDAO();
             int num = sc.nextInt();
             switch (num) {
                 case 1:
@@ -139,7 +150,8 @@ public class MenuListDAO {
                     }
                     break;
                 case 2:
-                    userReviewInsert();
+                    List<ReviewVO> list = rdao.reviewListAll();
+                    rdao.reviewResult(list);
                     break;
                 case 3:
                     // 예약 확인
@@ -233,17 +245,25 @@ public class MenuListDAO {
     public void ReserveOrDetail(){
 
         ReserveHotelDAO reserveHotel = new ReserveHotelDAO();
-        DetailHotelDAO detailHotel = new DetailHotelDAO();
+        ReviewDAO rdao = new ReviewDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("메뉴를 선택하세요(숫자)");
         System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
         int rod = sc.nextInt();
         if(rod ==1){
-            reserveHotel.reservation(hotelid,userid);
-            reserveHotel.reserveRoom();
+            // 예약 가능한 방 리스트 조회
+            List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid, userid);
+
+            // 예약 가능한 방 리스트 출력
+            if (!availableRooms.isEmpty()) {
+                reserveHotel.reserveRoom(availableRooms);  // 리스트를 전달하여 출력
+                BookARoom();
+            } else {
+                System.out.println("해당 기간에 예약 가능한 방이 없습니다.");
+            }
         } else if (rod ==2) {
-            List<ReviewVO> reviews =detailHotel.detail(hotelid);
-            printReviews(reviews);
+            List<ReviewVO> reviews =rdao.hotelReviewList(hotelid);
+            rdao.reviewResult(reviews);
         }else if(rod ==3) {
             selectRegion();
         }
@@ -255,8 +275,33 @@ public class MenuListDAO {
             System.out.println(review);
         }
     }
+    public void BookARoom(){
+        ReserveHotelDAO reserveHotelDAO = new ReserveHotelDAO();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("예약하실 roomID를 입력해주세요 : ");
+        br = sc.nextInt();
+        boolean isSuccess = reserveHotelDAO.BookARoom1(br,hotelid,userid);
+        if(isSuccess)System.out.println("예약에 성공하였습니다.");
+        else System.out.println("사원등록에 실패했습니다.");
 
+    }
 
+    public static String getValidDate(Scanner scanner, String prompt) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // 엄격한 형식 검사를 위해 설정
+
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            try {
+                // 입력받은 문자열이 유효한 날짜 형식인지 검사
+                dateFormat.parse(input);
+                return input; // 유효한 형식일 경우 입력값 반환
+            } catch (ParseException e) {
+                System.out.println("잘못된 날짜 형식입니다. 다시 입력하세요.");
+            }
+        }
+    }
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
         Pattern passPattern1 = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$");
@@ -406,11 +451,5 @@ public class MenuListDAO {
         }
     }
 
-    public String getUserid() {
-        return userid;
-    }
 
-    public void setUserid(String userid) {
-        this.userid = userid;
-    }
 }

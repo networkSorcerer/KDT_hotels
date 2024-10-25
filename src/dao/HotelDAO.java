@@ -1,9 +1,14 @@
 package dao;
 
+
 import common.Common;
 import vo.HotelVO;
 
-import java.sql.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
@@ -15,6 +20,34 @@ public class HotelDAO {
     ResultSet rs = null;
     ResultSet rs2 = null;
     Scanner sc = new Scanner(System.in);
+
+    public static void MaterHotelMenu() {
+        Scanner sc = new Scanner(System.in);
+        HotelDAO hDao = new HotelDAO();
+        while (true) {
+        System.out.println("===================");
+        System.out.println("   호텔 관리 메뉴");
+        System.out.println("[1]호텔 리스트 확인 [2]호텔등록 [3]호텔수정 [4]호텔삭제 [5]돌아가기");
+        int mHotelSel = sc.nextInt();
+            switch (mHotelSel) {
+                case 1:
+                    List<HotelVO> list = hDao.hotelSelectAll();
+                    hDao.hotelSelectRst(list);
+                    break;
+                case 2:
+                    hDao.hotelInsert();
+                    break;
+                case 3:
+                    hDao.hotelUpdate();
+                    break;
+                case 4:
+                    hDao.hotelDelete();
+                    break;
+                case 5:
+                    return;
+            }
+        }
+    }
 
     public List<HotelVO> hotelSelectAll() {
         List<HotelVO> list = new ArrayList<>();
@@ -125,7 +158,8 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int hotelID;
+
+        int HotelID;
         int check;
         try {
             conn = Common.getConnection();
@@ -194,21 +228,17 @@ public class HotelDAO {
         }
     }
     public Double hotelStar(String hotelName) {     // 호텔의 이름을 입력해서 해당 호텔 리뷰들의 평균 별점
-        List<Double> list = new ArrayList<>();
+        String sql = "SELECT AVG(R.STAR) AS avg_star FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = ?";
         double avgStar = 0;
-        double sum = 0;
         try {
             conn = Common.getConnection();
-            stmt = conn.createStatement();
-            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELNAME = '" + hotelName + "'";
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                double star = rs.getDouble("STAR");
-                list.add(star);
-                sum += star;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setString(1, hotelName);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                avgStar = rs.getDouble("avg_star");
             }
-            avgStar = sum / list.size();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         Common.close(stmt);
@@ -218,21 +248,17 @@ public class HotelDAO {
     }
 
     public Double hotelStar(int hotelID) {      // 호텔의 고유 번호를 입력해서 해당 호텔 리뷰들의 평균 별점
-        List<Double> list = new ArrayList<>();
+        String sql = "SELECT AVG(R.STAR) AS avg_star FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = ?";
         double avgStar = 0;
-        double sum = 0;
         try {
             conn = Common.getConnection();
-            stmt = conn.createStatement();
-            String sql = "SELECT R.STAR FROM HOTEL H JOIN REVIEWS R ON H.HOTELID = R.HOTELID WHERE H.HOTELID = " + hotelID;
-            rs = stmt.executeQuery(sql);
-            while (rs.next()) {
-                double star = rs.getDouble("STAR");
-                list.add(star);
-                sum += star;
+            pstmt = conn.prepareStatement(sql);
+            pstmt.setInt(1, hotelID);
+            rs = pstmt.executeQuery();
+            if (rs.next()) {
+                avgStar = rs.getDouble("avg_star");
             }
-            avgStar = sum / list.size();
-        } catch (Exception e) {
+        } catch (SQLException e) {
             e.printStackTrace();
         }
         Common.close(stmt);
@@ -241,7 +267,6 @@ public class HotelDAO {
         return avgStar;
     }
 }
-
 
 
 
