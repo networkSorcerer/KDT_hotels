@@ -22,7 +22,9 @@ public class HotelVO {
         this.region = region;
         this.phone = phone;
         this.hotelExpl=hotelExpl;
-
+    }
+    public HotelVO(int hotelID) {
+        this.hotelID = hotelID;
     }
 
 
