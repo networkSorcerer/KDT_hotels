@@ -71,7 +71,7 @@ public class UsersDAO {
 
     // 관리자용 유저 삭제
     public void usersDelete(String userID){
-        String sql = "DELETE FROM USERS WHERE USER_ID = ?";
+        String sql = "DELETE FROM USERS WHERE USERID = ?";
 
         try {
             conn = Common.getConnection();

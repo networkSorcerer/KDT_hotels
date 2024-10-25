@@ -27,7 +27,8 @@ public class MasterMenuDAO {
             while (true) {
                 System.out.println("=====================");
                 System.out.println("관리자 메뉴를 선택하세요.");
-                System.out.println("[1]호텔관리 [2]리뷰관리 [3]회원관리 [4]프로그램 종료");
+                System.out.println("[1]호텔관리 [2]리뷰관리 [3]회원관리 [4]로그아웃");
+              
                 int menuSel = sc.nextInt();
                 switch (menuSel) {
                     case 1:
@@ -61,7 +62,9 @@ public class MasterMenuDAO {
         String mID = sc.next();
         System.out.print("관리자 PW : ");
         String mPw = sc.next();
-        String mLoginsSql = "SELECT USERID FROM USERS WHERE USERID = "+mID+" AND PASSWORD = "+mPw+" AND GRADE = 1;";
+
+        String mLoginsSql = "SELECT USERID FROM USERS WHERE USERID = '"+mID+"' AND PASSWORD = '"+mPw+"' AND GRADE = 1";
+
         List<String> list = new ArrayList<>();
         String mName = null;
         try {
@@ -78,6 +81,7 @@ public class MasterMenuDAO {
             }
             System.out.println("어세오세요 관리자 "+mName+"님");
         } catch (Exception e) {
+            e.printStackTrace();
             System.out.println("관리자 로그인 오류");
             return false;
         }
