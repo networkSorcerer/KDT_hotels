@@ -62,7 +62,7 @@ public class MenuListDAO {
         System.out.print("pw :");
         String inputPW = sc.next();
 
-        if(Objects.equals(inputID, "S2222") && Objects.equals(inputPW, "2222")){
+        if(Objects.equals(userid, "S2222") && Objects.equals(inputPW, "2222")){
             MasterMenuDAO.MasterMenu();
 
         }

@@ -110,6 +110,7 @@ public class HotelDAO {
         List<Integer> list = new ArrayList<>();
         int hotelID;
         int check;
+        String name = null;
         try {
             conn = Common.getConnection();
             while (true) {
@@ -130,7 +131,7 @@ public class HotelDAO {
 
                 rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
                 while (rs.next()) {
-                    String name = rs.getString("HOTELNAME");
+                    name = rs.getString("HOTELNAME");
                     System.out.print(name + "이/가 리스트에서 삭제하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
@@ -138,7 +139,7 @@ public class HotelDAO {
                     pstmt = conn.prepareStatement(sqlDel);
                     pstmt.setInt(1, hotelID);
                     pstmt.executeUpdate();
-                    System.out.println(rs.getString("HOTELNAME") + "이/가 호텔 리스트에서 삭제되었습니다.");
+                    System.out.println(name + "이/가 호텔 리스트에서 삭제되었습니다.");
                     break;
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
@@ -180,6 +181,7 @@ public class HotelDAO {
                     System.out.print(name + "이/가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
                 }
                 check = sc.nextInt();
+                sc.nextLine();
 
                 if (check == 1) {
                     System.out.print("호텔 이름 : ");
@@ -200,6 +202,8 @@ public class HotelDAO {
                     pstmt.setString(4, hotelExpl);
                     pstmt.setInt(5, cHotelID);
                     pstmt.executeUpdate();
+                    break;
+
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
             }
@@ -237,6 +241,7 @@ public class HotelDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Common.close(pstmt);
         Common.close(stmt);
         Common.close(conn);
         Common.close(rs);
@@ -257,6 +262,7 @@ public class HotelDAO {
         } catch (SQLException e) {
             e.printStackTrace();
         }
+        Common.close(pstmt);
         Common.close(stmt);
         Common.close(conn);
         Common.close(rs);

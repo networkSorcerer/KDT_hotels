@@ -102,7 +102,7 @@ public class ReviewDAO {
 
     // 관리자 - 리뷰 삭제
 
-    public void reviewDelete(int reviewID){
+    public boolean reviewDelete(int reviewID){
         String sql = "DELETE FROM REVIEWS WHERE REVIEWID = ?";
 
         try {
