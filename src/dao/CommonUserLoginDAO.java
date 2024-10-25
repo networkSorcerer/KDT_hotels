@@ -20,4 +20,10 @@ public class CommonUserLoginDAO {
     Scanner sc = new Scanner(System.in);
 
 
+    public List<UsersVO> signIn() {
+
+        return List.of();
+    }
+
+
 }
