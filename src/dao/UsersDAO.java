@@ -70,19 +70,35 @@ public class UsersDAO {
     }
 
     // 관리자용 유저 삭제
-    public void usersDelete(String userID){
+    public boolean usersDelete(String userID){
         String sql = "DELETE FROM USERS WHERE USERID = ?";
-
+        List<String> list = new ArrayList<>();
         try {
             conn = Common.getConnection();
             pstmt = conn.prepareStatement(sql);
+            stmt = conn.createStatement();
+            rs = stmt.executeQuery("SELECT USERID FROM USERS WHERE USERID = '"+userID+"'");
             pstmt.setString(1, userID);
             pstmt.executeUpdate();  // insert, update, delete에 해당하는 함수
+            while (rs.next()) {
+                String delName = rs.getString("USERID");
+                list.add(delName);
+            }
+            if (list.contains(userID)){
+                return true;
+            } else {
+                System.out.println("존재하지 않는 유저 아이디 입니다.");
+                return false;
+            }
         } catch (SQLException e) {
             System.out.println("DELETE 에러 발생.");
+            e.printStackTrace();
+            return false;
         } finally {
             Common.close(pstmt);
             Common.close(conn);
+            Common.close(stmt);
+            Common.close(rs);
         }
     }
 

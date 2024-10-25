@@ -78,7 +78,7 @@ public class ReviewDAO {
 
     // 유저 리뷰 등록
     public boolean reviewInsert(ReviewVO vo){
-        String sql = "INSERT INTO REVIEW VALUES(" +
+        String sql = "INSERT INTO REVIEWS VALUES(" +
                 "REVIEWS_SEQ.NEXTVAL,?,?,?,?)";
 
         try {

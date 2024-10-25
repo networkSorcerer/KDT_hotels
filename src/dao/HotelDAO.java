@@ -157,7 +157,7 @@ public class HotelDAO {
     }
     public void hotelUpdate() {
         List<Integer> list = new ArrayList<>();
-        int HotelID;
+        int hID;
         int check;
         try {
             conn = Common.getConnection();
@@ -165,18 +165,18 @@ public class HotelDAO {
                 stmt = conn.createStatement();
                 rs2 = stmt.executeQuery("SELECT HOTELID FROM HOTEL");
                 while (rs2.next()) {
-                    HotelID = rs2.getInt("HOTELID");
-                    list.add(HotelID);
+                    hID = rs2.getInt("HOTELID");
+                    list.add(hID);
                 }
                 System.out.print("수정할 호텔의 고유번호를 입력해 주세요.");
-                int hotelID = sc.nextInt();
+                int cHotelID = sc.nextInt();
 
-                boolean isHotelIDIn = list.contains(hotelID);
+                boolean isHotelIDIn = list.contains(cHotelID);
                 if (!isHotelIDIn) {
                     System.out.println("고유번호에 해당하는 호텔이 없습니다.");
                     break;
                 }
-                rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + hotelID);
+                rs = stmt.executeQuery("SELECT HOTELNAME FROM HOTEL WHERE HOTELID =" + cHotelID);
                 while (rs.next()) {
                     String name = rs.getString("HOTELNAME");
                     System.out.print(name + "가 리스트에서 수정 하고 싶은 호텔의 이름이 맞습니까? [1]예 [2]아니오 [3]돌아가기");
@@ -200,7 +200,7 @@ public class HotelDAO {
                     pstmt.setString(2, hotelRegion);
                     pstmt.setString(3, hotelPhone);
                     pstmt.setString(4, hotelExpl);
-                    pstmt.setInt(5, hotelID);
+                    pstmt.setInt(5, cHotelID);
                     pstmt.executeUpdate();
                 } else if (check == 3) break;
                 else if (check != 2) System.out.println("잘못 입력하셨습니다.");
