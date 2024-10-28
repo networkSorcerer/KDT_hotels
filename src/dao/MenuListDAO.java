@@ -427,21 +427,16 @@ public class MenuListDAO {
             int reserveNo = sc.nextInt();
             for(ReservationVO e : list){
                 if(reserveNo == e.getReserveID()){ // 예약번호 있으면
+                    ReserveHotelDAO dao = new ReserveHotelDAO();
                     while(true){
                         System.out.println("[1] 예약 수정");
                         System.out.println("[2] 예약 취소");
                         System.out.print("입력: ");
                         int select = sc.nextInt();
                         if(select == 1){
-                            // 예약수정 메서드
-                            System.out.println("시작 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
-                            String startDate = sc.next();
-                            System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
-                            String endDate = sc.next();
-                            // 예약 가능한 방 리스트 조회
-                            List<ReservationVO> availableRooms = reserveHotelDao.reservation(hotelid);
-                            reserveHotelDao.reserveRoom(availableRooms);
-                            BookARoom();
+                            reserveHotelDao.updateRoom( userid, hotelid, reserveNo);
+                            List<ReservationVO>list1 = dao.updateRoom(userid, hotelid, reserveNo);
+                            dao.reserveRoom(list1);
                             break;
                         }else if(select == 2){
                             if(reservationDao.reservationDelete(reserveNo)){
