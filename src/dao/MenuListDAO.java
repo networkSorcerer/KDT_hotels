@@ -426,7 +426,7 @@ public class MenuListDAO {
             System.out.print("예약번호: ");
             int reserveNo = sc.nextInt();
             for(ReservationVO e : list){
-                if(reserveNo == e.getHotelID()){ // 예약번호 있으면
+                if(reserveNo == e.getReserveID()){ // 예약번호 있으면
                     while(true){
                         System.out.println("[1] 예약 수정");
                         System.out.println("[2] 예약 취소");
@@ -455,10 +455,9 @@ public class MenuListDAO {
                         }
                     }
                     break;
-                }else{  // 해당 예약번호가 없으면
-                    System.out.println("해당 예약번호가 없습니다.");
                 }
             }
+            System.out.println("예약번호가 없습니다.");
         }
     }
 
