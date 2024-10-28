@@ -150,11 +150,10 @@ public class MenuListDAO {
                     }
                     break;
                 case 2:
-                    List<ReviewVO> list = rdao.reviewListAll();
-                    rdao.reviewResult(list);
+                    userReviewInsert();
                     break;
                 case 3:
-                    // 예약 확인
+                    userReservationManage();
                 case 4:
                     System.out.println("로그아웃!");
                     userid=null;
@@ -432,6 +431,10 @@ public class MenuListDAO {
                         int select = sc.nextInt();
                         if(select == 1){
                             // 예약수정 메서드
+                            System.out.println("시작 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                            String startDate = sc.next();
+                            System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                            String endDate = sc.next();
                             break;
                         }else if(select == 2){
                             if(reservationDao.reservationDelete(reserveNo)){
