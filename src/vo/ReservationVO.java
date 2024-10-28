@@ -28,6 +28,13 @@ public class ReservationVO {
         return roomType;
     }
 
+    public ReservationVO(int reserveID, Date startDate, Date endDate, int roomID) {
+        this.reserveID = reserveID;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.roomID = roomID;
+    }
+
     public void setRoomType(String roomType) {
         this.roomType = roomType;
     }
