@@ -386,7 +386,6 @@ public class MenuListDAO {
         while(true){
             System.out.print("호텔명 입력: ");
             String hotelName = sc.nextLine();
-            hotelDao.hotelSelectID(hotelName);
             int hotelNumber = 0;
             // 호텔명 기준으로 호텔번호 가져오기
             for(int i=0; i<list.size(); i++){
@@ -398,6 +397,7 @@ public class MenuListDAO {
             if(hotelNumber == 0){
                 System.out.println("일치하는 호텔이 없습니다.");
             }else{
+                hotelid = hotelNumber;
                 System.out.println("내용: ");
                 String content = sc.nextLine();
                 System.out.println("평점(1~5): ");
