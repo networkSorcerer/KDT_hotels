@@ -1,10 +1,7 @@
 package dao;
 
 import common.Common;
-import vo.HotelVO;
-import vo.ReservationVO;
-import vo.ReviewVO;
-import vo.UsersVO;
+import vo.*;
 
 import java.sql.*;
 import java.text.ParseException;
@@ -26,6 +23,7 @@ public class MenuListDAO {
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     ReviewDAO reviewDao = new ReviewDAO();
     ReserveHotelDAO reserveHotelDao = new ReserveHotelDAO();
+    RoomDAO roomDao = new RoomDAO();
 
     List<UsersVO> list = new ArrayList<>();
     private static int hotelid;
@@ -249,7 +247,7 @@ public class MenuListDAO {
         ReviewDAO rdao = new ReviewDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("메뉴를 선택하세요(숫자)");
-        System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
+        System.out.println("[1] 예약하기 [2] 리뷰보기 [3]돌아가기");
         int rod = sc.nextInt();
         switch (rod) {
             case 1 :
@@ -427,16 +425,44 @@ public class MenuListDAO {
             int reserveNo = sc.nextInt();
             for(ReservationVO e : list){
                 if(reserveNo == e.getReserveID()){ // 예약번호 있으면
-                    ReserveHotelDAO dao = new ReserveHotelDAO();
                     while(true){
                         System.out.println("[1] 예약 수정");
                         System.out.println("[2] 예약 취소");
                         System.out.print("입력: ");
                         int select = sc.nextInt();
                         if(select == 1){
-                            reserveHotelDao.updateRoom( userid, hotelid, reserveNo);
-                            List<ReservationVO>list1 = dao.updateRoom(userid, hotelid, reserveNo);
-                            dao.reserveRoom(list1);
+                            while(true){
+                                try{
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                    System.out.println("시작 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                                    java.sql.Date startDate = (java.sql.Date) formatter.parse(sc.next());
+                                    System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                                    Date endDate = (Date) formatter.parse(sc.next());
+
+                                    System.out.println("[1]베이직 (1인) [2]스위트 (2인) [3]럭셔리 (4인)");
+                                    int roomType = sc.nextInt();
+                                    String[] type = {"베이직", "스위트", "럭셔리"};
+                                    String selectType = type[roomType - 1];
+
+                                    List<RoomVO> roomList = roomDao.roomList();
+                                    int roomID = 0;
+                                    for(RoomVO f : roomList){
+                                        if(f.getHotelID() == hotelid && f.getRoomType().equals(selectType)){
+                                            roomID = f.getRoomID();
+                                            break;
+                                        }
+                                    }
+                                    ReservationVO vo = new ReservationVO(reserveNo, startDate, endDate, roomID);
+                                    if(reservationDao.reservationUpdate(vo)){
+                                        System.out.println("예약이 수정되었습니다.");
+                                        break;
+                                    }else{
+                                        System.out.println("예약 수정중 오류 발생.");
+                                    }
+                                } catch (ParseException ParseError){
+                                    System.out.println("Date 타입 변환 오류.");
+                                }
+                            }
                             break;
                         }else if(select == 2){
                             if(reservationDao.reservationDelete(reserveNo)){

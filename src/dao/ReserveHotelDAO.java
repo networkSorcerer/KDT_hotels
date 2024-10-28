@@ -23,7 +23,7 @@ public class ReserveHotelDAO {
 
 
     // 예약 가능한 방을 조회하고 리스트로 반환
-    public List<ReservationVO> reservation(int hotelid) {
+    public List<ReservationVO> reservation(int hotel_id) {
 
         //Scanner sc =new Scanner(System.in);
         List<ReservationVO> list = new ArrayList<>();
@@ -44,7 +44,7 @@ public class ReserveHotelDAO {
         System.out.println(endD);
         String query = "SELECT r.roomID, r.hotelID, r.roomType, r.price, r.roomNumber " +
                 "FROM room r " +
-                "WHERE r.hotelID = " + hotelid + " " +
+                "WHERE r.hotelID = " + hotel_id + " " +
                 "AND r.roomType = '" + selectType + "' " +
                 "AND NOT EXISTS ( " +
                 "    SELECT 1 " +
