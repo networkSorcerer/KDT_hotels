@@ -23,9 +23,9 @@ public class MenuListDAO {
     PreparedStatement pstmt = null;
     ResultSet rs = null;
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
-    ReviewDAO reviewDao;
+    ReviewDAO reviewDao = new ReviewDAO();
     List<UsersVO> list = new ArrayList<>();
-    private int hotelid;
+    private static int hotelid;
     private String userid;
     String startD;
     String endD;
@@ -123,7 +123,7 @@ public class MenuListDAO {
             pstmt.setString(5, email);
             pstmt.setInt(6, 0);
 
-            int rst = pstmt.executeUpdate();
+            pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -136,9 +136,8 @@ public class MenuListDAO {
             System.out.println("반갑습니다, " + Hlist.get(0).getName() + " 회원님! 원하시는 메뉴를 선택해주세요.");
             System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
             System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
-            HotelListDAO dao = new HotelListDAO();
-            ReviewDAO rdao = new ReviewDAO();
             int num = sc.nextInt();
+            System.out.println();
             switch (num) {
                 case 1:
                     List<HotelVO> hotelList = selectRegion(); // 지역 선택 및 호텔 정보 조회
@@ -383,7 +382,7 @@ public class MenuListDAO {
 
         while(true){
             System.out.print("호텔명 입력: ");
-            String hotelName = sc.next();
+            String hotelName = sc.nextLine();
             int hotelNumber = 0;
             // 호텔명 기준으로 호텔번호 가져오기
             for(int i=0; i<list.size(); i++){
@@ -395,9 +394,9 @@ public class MenuListDAO {
             if(hotelNumber == 0){
                 System.out.println("일치하는 호텔이 없습니다.");
             }else{
-                System.out.print("내용: ");
+                System.out.println("내용: ");
                 String content = sc.nextLine();
-                System.out.print("평점(1~5): ");
+                System.out.println("평점(1~5): ");
                 int star = sc.nextInt();
 
                 ReviewVO reviewVo = new ReviewVO(0, hotelid, userid, content, star);
