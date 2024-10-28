@@ -32,7 +32,7 @@ public class MenuListDAO {
 
     private int br;
 
-    ReservationDAO reservationDao;
+    ReservationDAO reservationDao = new ReservationDAO();
 
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
