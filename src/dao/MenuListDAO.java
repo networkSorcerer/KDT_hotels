@@ -24,6 +24,8 @@ public class MenuListDAO {
     ResultSet rs = null;
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     ReviewDAO reviewDao = new ReviewDAO();
+    ReserveHotelDAO reserveHotelDao = new ReserveHotelDAO();
+
     List<UsersVO> list = new ArrayList<>();
     private static int hotelid;
     private String userid;
@@ -434,6 +436,10 @@ public class MenuListDAO {
                             String startDate = sc.next();
                             System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
                             String endDate = sc.next();
+                            // 예약 가능한 방 리스트 조회
+                            List<ReservationVO> availableRooms = reserveHotelDao.reservation(hotelid, userid);
+                            reserveHotelDao.reserveRoom(availableRooms);
+                            BookARoom();
                             break;
                         }else if(select == 2){
                             if(reservationDao.reservationDelete(reserveNo)){
