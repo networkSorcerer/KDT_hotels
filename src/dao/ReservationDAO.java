@@ -20,14 +20,14 @@ public class ReservationDAO {
         List<ReservationVO> list = new ArrayList<>();
         String query = "SELECT R.RESERVEID, R.USERID, R.HOTELID, H.HOTELNAME, R.STARTDATE, R.ENDDATE, R.ROOMID " +
                 "FROM RESERVATION R LEFT OUTER JOIN HOTEL H " +
-                "ON R.HOTELID = H.HOTELID" +
-                "WHERE USERID = ?";
+                "ON R.HOTELID = H.HOTELID " +
+                "WHERE R.USERID = ?";
 
         try{
             conn = Common.getConnection();
             pstmt = conn.prepareStatement(query);
             pstmt.setString(1, id);
-            rs = pstmt.executeQuery(query);
+            rs = pstmt.executeQuery();
 
             while(rs.next()) {
                 int reserveID = rs.getInt("RESERVEID");
@@ -42,7 +42,7 @@ public class ReservationDAO {
                 list.add(vo);
             }
             Common.close(rs);
-            Common.close(stmt);
+            Common.close(pstmt);
             Common.close(conn);
         } catch (SQLException e) {
             System.out.println("SELECT 에러 방생.");

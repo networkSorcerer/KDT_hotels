@@ -33,7 +33,7 @@ public class MenuListDAO {
 
     private int br;
 
-    ReservationDAO reservationDao;
+    ReservationDAO reservationDao = new ReservationDAO();
 
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
@@ -253,7 +253,7 @@ public class MenuListDAO {
         switch (rod) {
             case 1 :
             // 예약 가능한 방 리스트 조회
-            List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid, userid);
+            List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid);
 
             // 예약 가능한 방 리스트 출력
             if (!availableRooms.isEmpty()) {

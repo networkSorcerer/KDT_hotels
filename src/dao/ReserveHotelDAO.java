@@ -23,7 +23,7 @@ public class ReserveHotelDAO {
 
 
     // 예약 가능한 방을 조회하고 리스트로 반환
-    public List<ReservationVO> reservation(int hotelid, String userid) {
+    public List<ReservationVO> reservation(int hotelid) {
 
         //Scanner sc =new Scanner(System.in);
         List<ReservationVO> list = new ArrayList<>();
