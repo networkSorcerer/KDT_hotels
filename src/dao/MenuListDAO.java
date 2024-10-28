@@ -22,6 +22,7 @@ public class MenuListDAO {
     Statement stmt = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
+    HotelDAO hotelDao = new HotelDAO();
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
     ReviewDAO reviewDao = new ReviewDAO();
     ReserveHotelDAO reserveHotelDao = new ReserveHotelDAO();
@@ -385,6 +386,7 @@ public class MenuListDAO {
         while(true){
             System.out.print("호텔명 입력: ");
             String hotelName = sc.nextLine();
+            hotelDao.hotelSelectID(hotelName);
             int hotelNumber = 0;
             // 호텔명 기준으로 호텔번호 가져오기
             for(int i=0; i<list.size(); i++){
@@ -437,7 +439,7 @@ public class MenuListDAO {
                             System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
                             String endDate = sc.next();
                             // 예약 가능한 방 리스트 조회
-                            List<ReservationVO> availableRooms = reserveHotelDao.reservation(hotelid, userid);
+                            List<ReservationVO> availableRooms = reserveHotelDao.reservation(hotelid);
                             reserveHotelDao.reserveRoom(availableRooms);
                             BookARoom();
                             break;
