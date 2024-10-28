@@ -1,12 +1,14 @@
 package dao;
 
 import common.Common;
-import vo.HotelVO;
-import vo.UsersVO;
+import vo.*;
 
 import java.sql.*;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Scanner;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -17,9 +19,21 @@ public class MenuListDAO {
     Statement stmt = null;
     PreparedStatement pstmt = null;
     ResultSet rs = null;
+    HotelDAO hotelDao = new HotelDAO();
     MasterMenuDAO masterMenuDAO = new MasterMenuDAO();
-    List<UsersVO> list = new ArrayList<>();
+    ReviewDAO reviewDao = new ReviewDAO();
+    ReserveHotelDAO reserveHotelDao = new ReserveHotelDAO();
+    RoomDAO roomDao = new RoomDAO();
 
+    List<UsersVO> list = new ArrayList<>();
+    private static int hotelid;
+    private String userid;
+    String startD;
+    String endD;
+
+    private int br;
+
+    ReservationDAO reservationDao = new ReservationDAO();
     public void LoginMenu() throws SQLException {
         Scanner sc = new Scanner(System.in);
         while(true) {
@@ -46,16 +60,18 @@ public class MenuListDAO {
 
         System.out.println("=".repeat(10)+" L O G I N "+"=".repeat(10));
         System.out.print("id :");
-        String inputID = sc.next();
+        userid = sc.next();
         System.out.print("pw :");
         String inputPW = sc.next();
-        if(inputID == "S2222" && inputPW == "2222"){
-            masterMenuDAO.MasterMenu();
+
+        if(Objects.equals(userid, "S2222") && Objects.equals(inputPW, "2222")){
+            MasterMenuDAO.MasterMenu();
+
         }
         try{
             conn = Common.getConnection();
             stmt = conn.createStatement();
-            String query = "select * from users where userid ='"+inputID+"'and password ='" + inputPW+"'";
+            String query = "select * from users where userid ='"+userid+"'and password ='" + inputPW+"'";
             rs = stmt.executeQuery(query);
             while (rs.next()) {
                 String userID = rs.getString("userID");
@@ -107,7 +123,7 @@ public class MenuListDAO {
             pstmt.setString(5, email);
             pstmt.setInt(6, 0);
 
-            int rst = pstmt.executeUpdate();
+            pstmt.executeUpdate();
         } catch (Exception e) {
             e.printStackTrace();
         }
@@ -120,8 +136,8 @@ public class MenuListDAO {
             System.out.println("반갑습니다, " + Hlist.get(0).getName() + " 회원님! 원하시는 메뉴를 선택해주세요.");
             System.out.println("=".repeat(10) + "Hotels Main 화면" + "=".repeat(10));
             System.out.print("[1]호텔 검색 [2]리뷰 등록 [3]예약 확인 [4]로그 아웃 ");
-            HotelListDAO dao = new HotelListDAO();
             int num = sc.nextInt();
+            System.out.println();
             switch (num) {
                 case 1:
                     List<HotelVO> hotelList = selectRegion(); // 지역 선택 및 호텔 정보 조회
@@ -133,12 +149,13 @@ public class MenuListDAO {
                     }
                     break;
                 case 2:
-
+                    userReviewInsert();
+                    break;
                 case 3:
-
+                    userReservationManage();
                 case 4:
                     System.out.println("로그아웃!");
-                    list=null;
+                    userid=null;
                     LoginMenu(); // 로그인화면
                     break;
             }
@@ -215,32 +232,75 @@ public class MenuListDAO {
             System.out.println();
         }
         System.out.println("---------------------------------------");
+        chooseHotel();
     }
     public void chooseHotel(){
-
+        Scanner sc = new Scanner(System.in);
+        System.out.println("호텔 ID를 입력하세요 : ");
+        hotelid = sc.nextInt();
     }
 
     public void ReserveOrDetail(){
+
         ReserveHotelDAO reserveHotel = new ReserveHotelDAO();
-        DetailHotelDAO detailHotel = new DetailHotelDAO();
+        ReviewDAO rdao = new ReviewDAO();
         Scanner sc = new Scanner(System.in);
         System.out.println("메뉴를 선택하세요(숫자)");
-        System.out.println("[1] 예약하기 [2] 상세보기 [3]돌아가기");
+        System.out.println("[1] 예약하기 [2] 리뷰보기 [3]돌아가기");
         int rod = sc.nextInt();
-        if(rod ==1){
-            reserveHotel.reservation();
-        } else if (rod ==2) {
-            detailHotel.detail();
-        }else if(rod ==3) {
+        switch (rod) {
+            case 1 :
+            // 예약 가능한 방 리스트 조회
+            List<ReservationVO> availableRooms = reserveHotel.reservation(hotelid);
+
+            // 예약 가능한 방 리스트 출력
+            if (!availableRooms.isEmpty()) {
+                reserveHotel.reserveRoom(availableRooms);  // 리스트를 전달하여 출력
+                BookARoom();
+            } else {
+                System.out.println("해당 기간에 예약 가능한 방이 없습니다.");
+            }
+            break;
+            case 2 :
+            List<ReviewVO> reviews =rdao.hotelReviewList(hotelid);
+            rdao.reviewResult(reviews);
+            break;
+            case 3 :
             selectRegion();
+            break;
         }
+    }
 
-
+    public void BookARoom(){
+        ReserveHotelDAO reserveHotelDAO = new ReserveHotelDAO();
+        Scanner sc = new Scanner(System.in);
+        System.out.println("예약하실 roomID를 입력해주세요 : ");
+        br = sc.nextInt();
+        boolean isSuccess = reserveHotelDAO.BookARoom1(br,hotelid,userid);
+        if(isSuccess) {
+            System.out.println("예약에 성공하였습니다.");
+        } else {
+            System.out.println("예약등록에 실패했습니다.");
+        }
 
     }
 
+    public static String getValidDate(Scanner scanner, String prompt) {
+        SimpleDateFormat dateFormat = new SimpleDateFormat("yyyy-MM-dd");
+        dateFormat.setLenient(false); // 엄격한 형식 검사를 위해 설정
 
-
+        while (true) {
+            System.out.print(prompt);
+            String input = scanner.nextLine();
+            try {
+                // 입력받은 문자열이 유효한 날짜 형식인지 검사
+                dateFormat.parse(input);
+                return input; // 유효한 형식일 경우 입력값 반환
+            } catch (ParseException e) {
+                System.out.println("올바른 형식을 입력해주세요.");
+            }
+        }
+    }
     private String checkPassword(String pwd, String id){
         // 비밀번호 포맷 확인(영문, 특수문자, 숫자 포함 8자 이상)
         Pattern passPattern1 = Pattern.compile("^(?=.*[a-zA-Z])(?=.*\\d)(?=.*\\W).{8,20}$");
@@ -312,4 +372,114 @@ public class MenuListDAO {
 
         return "";
     }
+
+    // 유저메뉴 - 리뷰등록
+    public void userReviewInsert(){
+        System.out.println("<리뷰 등록>");
+        List<ReservationVO> list = reservationDao.reservationList(userid);
+        reservationDao.reservationListResult(list);
+        System.out.println("--------------------------------------");
+
+        while(true){
+            System.out.print("호텔명 입력: ");
+            String hotelName = sc.nextLine();
+            int hotelNumber = 0;
+            // 호텔명 기준으로 호텔번호 가져오기
+            for(int i=0; i<list.size(); i++){
+                if(list.get(i).getHotelName().equals(hotelName)){
+                    hotelNumber = list.get(i).getHotelID();
+                    break;
+                }
+            }
+            if(hotelNumber == 0){
+                System.out.println("일치하는 호텔이 없습니다.");
+            }else{
+                hotelid = hotelNumber;
+                System.out.println("내용: ");
+                String content = sc.nextLine();
+                System.out.println("평점(1~5): ");
+                int star = sc.nextInt();
+
+                ReviewVO reviewVo = new ReviewVO(0, hotelid, userid, content, star);
+                if(reviewDao.reviewInsert(reviewVo)){
+                    System.out.println("리뷰가 등록되었습니다.");
+                    break;
+                }else{
+                    System.out.println("리뷰 등록이 실패했습니다.");
+                    break;
+                }
+            }
+        }
+    }
+
+    // 유저메뉴 - 예약확인
+    public void userReservationManage(){
+        System.out.println("<예약 확인>");
+        List<ReservationVO> list = reservationDao.reservationList(userid);
+        reservationDao.reservationListResult(list);
+        System.out.println("--------------------------------------");
+
+        while(true){
+            System.out.print("예약번호: ");
+            int reserveNo = sc.nextInt();
+            for(ReservationVO e : list){
+                if(reserveNo == e.getReserveID()){ // 예약번호 있으면
+                    while(true){
+                        System.out.println("[1] 예약 수정");
+                        System.out.println("[2] 예약 취소");
+                        System.out.print("입력: ");
+                        int select = sc.nextInt();
+                        if(select == 1){
+                            while(true){
+                                try{
+                                    SimpleDateFormat formatter = new SimpleDateFormat("yyyy-MM-dd");
+                                    System.out.println("시작 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                                    java.sql.Date startDate = (java.sql.Date) formatter.parse(sc.next());
+                                    System.out.println("종료 날짜를 입력하세요 (형식: YYYY-MM-DD): ");
+                                    Date endDate = (Date) formatter.parse(sc.next());
+
+                                    System.out.println("[1]베이직 (1인) [2]스위트 (2인) [3]럭셔리 (4인)");
+                                    int roomType = sc.nextInt();
+                                    String[] type = {"베이직", "스위트", "럭셔리"};
+                                    String selectType = type[roomType - 1];
+
+                                    List<RoomVO> roomList = roomDao.roomList();
+                                    int roomID = 0;
+                                    for(RoomVO f : roomList){
+                                        if(f.getHotelID() == hotelid && f.getRoomType().equals(selectType)){
+                                            roomID = f.getRoomID();
+                                            break;
+                                        }
+                                    }
+                                    ReservationVO vo = new ReservationVO(reserveNo, startDate, endDate, roomID);
+                                    if(reservationDao.reservationUpdate(vo)){
+                                        System.out.println("예약이 수정되었습니다.");
+                                        break;
+                                    }else{
+                                        System.out.println("예약 수정중 오류 발생.");
+                                    }
+                                } catch (ParseException ParseError){
+                                    System.out.println("Date 타입 변환 오류.");
+                                }
+                            }
+                            break;
+                        }else if(select == 2){
+                            if(reservationDao.reservationDelete(reserveNo)){
+                                System.out.println("예약이 취소되었습니다.");
+                                break;
+                            }else{
+                                System.out.println("예약 취소중 문제가 발생했습니다.");
+                            }
+                        }else{
+                            System.out.println("잘못된 입력입니다.");
+                        }
+                    }
+                    break;
+                }
+            }
+            System.out.println("예약번호가 없습니다.");
+        }
+    }
+
+
 }

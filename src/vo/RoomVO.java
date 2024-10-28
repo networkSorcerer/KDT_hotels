@@ -1,7 +1,7 @@
 package vo;
 
 public class RoomVO {
-    private String roomID;
+    private int roomID;
     private int hotelID;
     private String roomType;
     private int price;
@@ -9,7 +9,7 @@ public class RoomVO {
 
     public RoomVO() {}
 
-    public RoomVO(String roomID, int hotelID, String roomType, int price, int roomNumber) {
+    public RoomVO(int roomID, int hotelID, String roomType, int price, int roomNumber) {
         this.roomID = roomID;
         this.hotelID = hotelID;
         this.roomType = roomType;
@@ -17,7 +17,7 @@ public class RoomVO {
         this.roomNumber = roomNumber;
     }
 
-    public String getRoomID() {
+    public int getRoomID() {
         return roomID;
     }
 
@@ -37,7 +37,7 @@ public class RoomVO {
         return roomNumber;
     }
 
-    public void setRoomID(String roomID) {
+    public void setRoomID(int roomID) {
         this.roomID = roomID;
     }
 
