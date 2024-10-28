@@ -455,10 +455,9 @@ public class MenuListDAO {
                         }
                     }
                     break;
-                }else{  // 해당 예약번호가 없으면
-                    System.out.println("해당 예약번호가 없습니다.");
                 }
             }
+            System.out.println("예약번호가 없습니다.");
         }
     }
 

@@ -275,26 +275,6 @@ public class HotelDAO {
         Common.close(rs);
         return avgStar;
     }
-
-    // 호텔명을 가져와서 호텔ID 반환
-    public int hotelSelectID(String hotelName){
-        String query = "SELECT HOTELID FROM HOTEL WHERE HOTELNAME = ?";
-        int hotelID = 0;
-
-        try {
-            conn = Common.getConnection();
-            pstmt = conn.prepareStatement(query);
-            pstmt.setString(1, hotelName);
-            rs = pstmt.executeQuery();
-            hotelID = rs.getInt("HOTELID");
-            Common.close(rs);
-            Common.close(pstmt);
-            Common.close(conn);
-        } catch (SQLException e) {
-            System.out.println("호텔ID 찾기 실패.");
-        }
-        return hotelID;
-    }
 }
 
 
